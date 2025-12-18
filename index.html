@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Menú Virtual</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      background: #0f172a;
+      margin: 0;
+      touch-action: manipulation;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // --- ICONS ---
+    const Icon = ({ char, className }) => <span className={`flex items-center justify-center ${className}`}>{char}</span>;
+    const Icons = {
+      Cart: (p) => <Icon char="🛒" {...p} />,
+      Trash: (p) => <Icon char="🗑️" {...p} />,
+      Edit: (p) => <Icon char="✏️" {...p} />,
+      Back: (p) => <Icon char="←" {...p} />,
+      Close: (p) => <Icon char="✕" {...p} />,
+      Money: (p) => <Icon char="💵" {...p} />,
+      Check: (p) => <Icon char="✔️" {...p} />,
+      Location: (p) => <Icon char="📍" {...p} />,
+      Whatsapp: (p) => <Icon char="💬" {...p} />,
+      Download: (p) => <Icon char="⬇️" {...p} />,
+      Store: (p) => <Icon char="🏪" {...p} />,
+      Bike: (p) => <Icon char="🏍️" {...p} />
+    };
+
+    // --- CONSTANTS ---
+    const DELIVERY_COST = 25.00;
+
+    const COLONIAS_APODACA = [
+      "Valle del Salduero",
+      "Ex-Hacienda Santa Rosa",
+      "Villas de Santa Rosa",
+      "Los Murales",
+      "Prados de Santa Rosa",
+      "Paraje Santa Rosa",
+      "Quinta Colonial Apodaca I",
+      "Quinta Colonial Apodaca II",
+      "Quinta Colonial Apodaca III",
+      "Antesalista",
+      "Los Soles",
+      "Arbado Castañares"
+    ];
+
+    const DATA_CATEGORIES = [
+      { id: 1, name: 'FRESAS CON CREMA' },
+      { id: 1763753318246, name: 'FRAPPES' }
+    ];
+
+    // UPDATED PRODUCT DATA (Prices $0 for extras)
+    const DATA_PRODUCTS = [
+      {
+        "id": 1, "name": "CHICAS", "categoryId": 1,
+        "variants": [
+          { "id": "v1", "name": "NORMALES", "price": 65 },
+          { "id": "v2", "name": "GANSITO", "price": 70 },
+          { "id": 1763753527293, "name": "PINGÜINO", "price": 70 },
+          { "id": 1763753538637, "name": "CHOCORROL", "price": 70 },
+          { "id": 1763753549682, "name": "BUBULUBU", "price": 70 },
+          { "id": 1763753557982, "name": "KINDER BUENO", "price": 75 },
+          { "id": 1763753568073, "name": "PALETA PAYASO", "price": 75 },
+          { "id": 1763753590412, "name": "TROCITOS DE PAY", "price": 90 },
+          { "id": 1763753609033, "name": "FERRERO ROCHER", "price": 110 }
+        ],
+        "elements": [
+          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Nutella", "price": 0 }, { "id": "b2", "name": "Chantilly", "price": 0 }, { "id": "b3", "name": "Plts de chocolate", "price": 0 }] },
+          { "id": "toppings", "name": "Toppings", "type": "topping", "max": 1, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas de chocolate", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
+          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella Liquida", "price": 0 }] }
+        ]
+      },
+      {
+        "id": 2, "name": "MEDIANAS", "categoryId": 1,
+        "variants": [
+          { "id": "vm1", "name": "NORMALES", "price": 85 },
+          { "id": "vm2", "name": "GANSITO", "price": 90 },
+          { "id": "vm3", "name": "PINGÜINO", "price": 90 },
+          { "id": "vm4", "name": "CHOCORROL", "price": 90 },
+          { "id": "vm5", "name": "BUBULUBU", "price": 90 },
+          { "id": "vm6", "name": "KINDER BUENO", "price": 95 },
+          { "id": "vm7", "name": "PALETA PAYASO", "price": 95 },
+          { "id": "vm8", "name": "TROCITOS DE PAY", "price": 100 },
+          { "id": "vm9", "name": "FERRERO ROCHER", "price": 135 }
+        ],
+        "elements": [
+          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Nutella", "price": 0 }, { "id": "b2", "name": "Chantilly", "price": 0 }, { "id": "b3", "name": "Plts de chocolate", "price": 0 }] },
+          { "id": "toppings", "name": "Toppings", "type": "topping", "max": 2, "allowRepeat": true, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
+          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella Liq", "price": 0 }] }
+        ]
+      },
+      {
+        "id": 3, "name": "GRANDES", "categoryId": 1,
+        "variants": [
+          { "id": "vg1", "name": "NORMALES", "price": 115 },
+          { "id": "vg2", "name": "GANSITO", "price": 120 },
+          { "id": "vg3", "name": "PINGÜINO", "price": 120 },
+          { "id": "vg4", "name": "CHOCORROL", "price": 120 },
+          { "id": "vg5", "name": "BUBULUBU", "price": 120 },
+          { "id": "vg6", "name": "KINDER BUENO", "price": 125 },
+          { "id": "vg7", "name": "PALETA PAYASO", "price": 125 },
+          { "id": "vg8", "name": "TROCITOS DE PAY", "price": 130 },
+          { "id": "vg9", "name": "FERRERO ROCHER", "price": 165 }
+        ],
+        "elements": [
+          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Nutella", "price": 0 }, { "id": "b2", "name": "Chantilly", "price": 0 }, { "id": "b3", "name": "Plts de chocolate", "price": 0 }] },
+          { "id": "toppings", "name": "Toppings", "type": "topping", "max": 3, "allowRepeat": true, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
+          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella Liq", "price": 0 }] }
+        ]
+      },
+      {
+        "id": 4, "name": "NORMAL", "categoryId": 1763753318246,
+        "variants": [
+          { "id": "vf1", "name": "OREO", "price": 65 },
+          { "id": "vf2", "name": "GANSITO", "price": 75 },
+          { "id": "vf3", "name": "PINGÜINO", "price": 75 },
+          { "id": "vf4", "name": "CHOCORROL", "price": 75 },
+          { "id": "vf5", "name": "BUBULUBU", "price": 75 },
+          { "id": "vf6", "name": "KINDER BUENO", "price": 75 },
+          { "id": "vf7", "name": "M&M´s", "price": 75 }
+        ],
+        "elements": []
+      }
+    ];
+
+    // --- CANVAS UTILS ---
+
+    // Helper to wrap text in Canvas
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+          ctx.fillText(line, x, y);
+          line = words[n] + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, y);
+      return y + lineHeight;
+    }
+
+    const generateTicketImage = (items, orderInfo, total, deliveryCost) => {
+
+      // Helper function that handles drawing (or measuring)
+      // returns the final Y position
+      const renderTicket = (ctx, onlyMeasure = false) => {
+        // Setup fonts
+        if (!onlyMeasure) {
+          ctx.fillStyle = '#f8fafc';
+          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        }
+
+        const drawText = (text, x, y, font, color, align = 'left') => {
+          if (onlyMeasure) return;
+          ctx.font = font;
+          ctx.fillStyle = color;
+          ctx.textAlign = align;
+          ctx.fillText(text, x, y);
+        };
+
+        const drawRect = (x, y, w, h, color, strokeColor = null) => {
+          if (onlyMeasure) return;
+          ctx.fillStyle = color;
+          ctx.fillRect(x, y, w, h);
+          if (strokeColor) {
+            ctx.strokeStyle = strokeColor;
+            ctx.strokeRect(x, y, w, h);
+          }
+        };
+
+        // 1. Header
+        drawRect(20, 20, 460, 80, '#cbd5e1');
+        drawText("TICKET DE PEDIDO", 250, 60, 'bold 30px sans-serif', '#0f172a', 'center');
+        drawText(new Date().toLocaleString(), 250, 85, '16px sans-serif', '#0f172a', 'center');
+
+        let y = 140;
+
+        // 2. Client Info
+        drawText("DATOS DEL CLIENTE:", 30, y, 'bold 20px sans-serif', '#0f172a'); y += 30;
+        drawText(`NOMBRE: ${orderInfo.name} ${orderInfo.lastname || ''}`, 40, y, 'bold 16px sans-serif', '#334155'); y += 25;
+        drawText(`WHATSAPP: +52 ${orderInfo.contact.replace(/[^\d]/g, '').slice(-10)}`, 40, y, 'bold 16px sans-serif', '#334155'); y += 35;
+
+        // Delivery Info
+        if (orderInfo.method === 'delivery') {
+          drawRect(30, y - 10, 440, 110, '#e0f2fe', '#bfdbfe');
+          drawText("📍 ENVÍO A DOMICILIO:", 45, y + 15, 'bold 16px sans-serif', '#0369a1'); y += 25;
+          drawText(`${orderInfo.colonia}`, 45, y + 15, '15px sans-serif', '#1e3a8a'); y += 20;
+          drawText(`${orderInfo.address}`, 45, y + 15, '15px sans-serif', '#1e3a8a'); y += 20;
+
+          // Wrap text for description
+          if (!onlyMeasure) {
+            ctx.font = '15px sans-serif';
+            ctx.fillStyle = '#1e3a8a';
+            ctx.textAlign = 'left';
+            y = wrapText(ctx, `Ref: ${orderInfo.description}`, 45, y + 15, 410, 20) + 15;
+          } else {
+            // Must simulate wrapText height increase
+            const dummyCtx = document.createElement('canvas').getContext('2d');
+            dummyCtx.font = '15px sans-serif';
+            // Mock wrapText measure
+            y = wrapText(dummyCtx, `Ref: ${orderInfo.description}`, 45, y + 15, 410, 20) + 15;
+          }
+        }
+
+        y += 20;
+        // Divider
+        if (!onlyMeasure) {
+          ctx.strokeStyle = '#94a3b8';
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath(); ctx.moveTo(30, y); ctx.lineTo(470, y); ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        y += 30;
+
+        // 3. Order Items
+        drawText("DATOS DEL PEDIDO:", 30, y, 'bold 20px sans-serif', '#0f172a'); y += 30;
+
+        items.forEach(item => {
+          drawText(item.categoryName, 40, y, 'bold 12px sans-serif', '#be185d'); y += 18;
+
+          if (!onlyMeasure) {
+            ctx.font = 'bold 18px sans-serif';
+            ctx.fillStyle = '#0f172a';
+            ctx.textAlign = 'left';
+            ctx.fillText(item.productName, 40, y);
+            ctx.textAlign = 'right';
+            ctx.fillText(`$${item.totalPrice.toFixed(2)}`, 460, y);
+          }
+          y += 22;
+
+          drawText(item.variantName, 40, y, 'italic 15px sans-serif', '#475569'); y += 20;
+
+          if (item.selections) {
+            const dummyCtx = onlyMeasure ? document.createElement('canvas').getContext('2d') : ctx;
+            if (onlyMeasure) dummyCtx.font = '14px sans-serif';
+            else ctx.font = '14px sans-serif';
+
+            Object.keys(item.selections).forEach(gid => {
+              const grp = item.elementConfig.find(g => g.id === gid);
+              const sels = item.selections[gid];
+              if (sels && sels.length) {
+                const names = sels.map(s => s.name).join(', ');
+                // Use real wrapText to get exact lines
+                if (!onlyMeasure) ctx.fillStyle = '#64748b';
+                y = wrapText(dummyCtx, `- ${grp.name}: ${names}`, 50, y, 400, 18);
+              }
+            });
+          }
+          y += 10;
+          drawRect(40, y, 420, 1, '#e2e8f0');
+          y += 20;
+        });
+
+        y += 20;
+
+        // 4. Totals
+        if (orderInfo.method === 'delivery') {
+          if (!onlyMeasure) {
+            ctx.font = '18px sans-serif';
+            ctx.fillStyle = '#334155';
+            ctx.textAlign = 'left'; ctx.fillText("Subtotal:", 40, y);
+            ctx.textAlign = 'right'; ctx.fillText(`$${(total - deliveryCost).toFixed(2)}`, 460, y);
+          }
+          y += 30;
+          if (!onlyMeasure) {
+            ctx.textAlign = 'left'; ctx.fillText("Envío:", 40, y);
+            ctx.textAlign = 'right'; ctx.fillText(`$${deliveryCost.toFixed(2)}`, 460, y);
+          }
+          y += 50; // Space
+        }
+
+        // Total Bar
+        drawRect(30, y, 440, 70, '#0f172a');
+        if (!onlyMeasure) {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 28px sans-serif';
+          ctx.textAlign = 'left'; ctx.fillText("TOTAL A PAGAR:", 50, y + 45);
+          ctx.textAlign = 'right';
+          ctx.fillStyle = '#f472b6'; ctx.fillText(`$${total.toFixed(2)}`, 450, y + 45);
+        }
+
+        y += 100; // Space after total
+
+        // 5. Footer ID
+        drawText(`#${orderInfo.ticketId}`, 250, y, 'bold 30px monospace', '#94a3b8', 'center');
+
+        y += 50; // Bottom Padding
+
+        return y;
+      };
+
+      // PASS 1: Calculate exact height
+      const finalHeight = renderTicket(null, true);
+
+      // PASS 2: Draw
+      const canvas = document.createElement('canvas');
+      canvas.width = 500;
+      canvas.height = finalHeight;
+      const ctx = canvas.getContext('2d');
+      // Fix background since helper expects context
+      renderTicket(ctx, false);
+
+      downloadCanvas(canvas, `Ticket_${orderInfo.ticketId}.png`);
+    };
+
+    const generatePaymentImage = (ticketId, total) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 500;
+      canvas.height = 750; // Taller for warning
+      const ctx = canvas.getContext('2d');
+
+      // Gradient Background
+      const grd = ctx.createLinearGradient(0, 0, 0, 750);
+      grd.addColorStop(0, "#fff1f2"); // rose-50
+      grd.addColorStop(1, "#ffe4e6"); // rose-100
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, 500, 750);
+
+      // Frame
+      ctx.strokeStyle = "#be185d";
+      ctx.lineWidth = 5;
+      ctx.strokeRect(15, 15, 470, 720);
+
+      ctx.textAlign = 'center';
+
+      // Header
+      ctx.fillStyle = '#831843';
+      ctx.font = 'bold 32px sans-serif';
+      ctx.fillText("DATOS DE PAGO", 250, 80);
+
+      // Emoji Box
+      ctx.font = '60px serif';
+      ctx.fillText("🏦 💸 📱", 250, 160);
+
+      // Info
+      let y = 230;
+      ctx.textAlign = 'left';
+      ctx.font = '22px sans-serif';
+
+      const drawRow = (emoji, label, value) => {
+        ctx.font = '24px serif';
+        ctx.fillStyle = '#000';
+        ctx.fillText(emoji, 50, y);
+
+        ctx.font = 'bold 20px sans-serif';
+        ctx.fillStyle = '#64748b'; // slate-500
+        ctx.fillText(label, 90, y);
+
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillStyle = '#0f172a'; // slate-900
+        ctx.fillText(value, 90, y + 30);
+        y += 80;
+      };
+
+      drawRow("🏦", "BANCO:", "BANCOPPEL");
+      drawRow("👤", "TITULAR:", "Leonor Ortiz Cordova");
+      drawRow("💳", "CLABE:", "13 7580 1030 2125 6738");
+
+      // Total Exacto
+      y += 10;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 20px sans-serif';
+      ctx.fillText("MONTO TOTAL EXACTO:", 250, y); y += 35;
+      ctx.font = 'bold 40px sans-serif';
+      ctx.fillStyle = '#be185d';
+      ctx.fillText(`$${total.toFixed(2)}`, 250, y); y += 50;
+
+      // Concept Box
+      ctx.fillStyle = '#fce7f3'; // pink-100
+      ctx.fillRect(40, y, 420, 90);
+      ctx.strokeStyle = '#fbcfe8';
+      ctx.strokeRect(40, y, 420, 90);
+
+      ctx.fillStyle = '#831843';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText("CONCEPTO REQUERIDO:", 250, y + 30);
+      ctx.font = 'bold 45px monospace';
+      ctx.fillText(ticketId, 250, y + 70);
+
+      y += 110;
+      // Warning Message
+      ctx.fillStyle = '#ef4444'; // red-500
+      ctx.font = 'bold 14px sans-serif';
+      ctx.textAlign = 'center'; // FORCE CENTER ALIGNMENT
+      wrapText(ctx, "⚠ RECUERDA: Tu pedido NO se preparará hasta recibir el comprobante con el monto EXACTO y este número de concepto.", 250, y, 400, 20);
+
+      downloadCanvas(canvas, `Pago_${ticketId}.png`);
+    };
+
+    const downloadCanvas = (canvas, filename) => {
+      try {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (e) { alert("No se pudo descargar la imagen"); }
+    };
+
+    // --- APP COMPONENT ---
+    function App() {
+      const [cart, setCart] = useState([]);
+      const [currentCategory, setCurrentCategory] = useState(DATA_CATEGORIES[0].id);
+
+      useEffect(() => {
+        const handleBeforeUnload = (e) => {
+          if (cart.length > 0) {
+            const message = "Se perderá la información. ¿Desea recargar?";
+            e.preventDefault();
+            e.returnValue = message;
+            return message;
+          }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+      }, [cart]);
+
+      const [modalState, setModalState] = useState({
+        type: null,
+        data: null
+      });
+
+      const openModal = (type, data = null) => setModalState({ type, data });
+      const closeModal = () => setModalState({ type: null, data: null });
+
+      const addToCart = (item, quantity) => {
+        const items = Array(quantity).fill(item);
+        setCart([...cart, ...items]);
+        closeModal();
+      };
+
+      const updateCartItem = (index, newItem) => {
+        const newCart = [...cart];
+        newCart[index] = newItem;
+        setCart(newCart);
+        closeModal();
+      };
+
+      const removeCartItem = (index) => setCart(cart.filter((_, i) => i !== index));
+      const clearCart = () => setCart([]);
+
+      const [orderInfo, setOrderInfo] = useState(null);
+      const cartTotal = cart.reduce((acc, el) => acc + el.totalPrice, 0);
+      const finalTotal = orderInfo?.method === 'delivery' ? cartTotal + DELIVERY_COST : cartTotal;
+
+      const renderProductConfig = () => (
+        <ProductConfigModal
+          product={modalState.data?.product}
+          categoryName={DATA_CATEGORIES.find(c => c.id === modalState.data?.product.categoryId)?.name}
+          initialValues={modalState.data?.initialValues}
+          editIndex={modalState.data?.editIndex}
+          onClose={closeModal}
+          onConfirm={(item, qty) => {
+            if (modalState.data?.editIndex !== undefined) {
+              updateCartItem(modalState.data.editIndex, item);
+            } else {
+              addToCart(item, qty);
+            }
+          }}
+        />
+      );
+
+      return (
+        <div className="min-h-screen bg-slate-900 text-white font-sans overflow-x-hidden selection:bg-pink-500 selection:text-white pb-20">
+          {/* HEADER */}
+          <div className="fixed top-0 left-0 right-0 h-16 bg-slate-800/90 backdrop-blur-md z-40 px-4 flex items-center justify-between border-b border-slate-700 shadow-lg">
+            <h1 className="font-bold text-xl tracking-wider text-pink-500">MENÚ VIRTUAL</h1>
+            <button onClick={() => openModal('cart')} className="bg-pink-600 px-4 py-2 rounded-full font-bold flex items-center gap-2 active:scale-95 transition-all shadow-lg shadow-pink-900/50">
+              <Icons.Cart className="w-5 h-5" /> <span>{cart.length}</span>
+            </button>
+          </div>
+
+          {/* CONTENT */}
+          <div className="pt-20 px-4 max-w-2xl mx-auto">
+            <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-2">
+              {DATA_CATEGORIES.map(cat => (
+                <button key={cat.id} onClick={() => setCurrentCategory(cat.id)}
+                  className={`px-5 py-2.5 rounded-xl font-bold whitespace-nowrap transition-all uppercase tracking-wide
+                     ${currentCategory === cat.id ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg scale-105' : 'bg-slate-800 text-slate-400 border border-slate-700'}`}>
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              {DATA_PRODUCTS.filter(p => p.categoryId === currentCategory).map(p => (
+                <div key={p.id} onClick={() => openModal('product_config', { product: p })}
+                  className="bg-slate-800 rounded-2xl p-4 border border-slate-700 active:bg-slate-700/80 transition-all cursor-pointer shadow-md flex justify-between items-center group relative overflow-hidden">
+                  <div>
+                    <h3 className="font-bold text-xl mb-1 group-hover:text-pink-400 transition-colors uppercase">{p.name}</h3>
+                    <p className="text-slate-400 text-sm">{p.variants.length} Variantes</p>
+                  </div>
+                  <button className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-pink-500 group-hover:scale-110 transition-all border border-slate-600">
+                    <span className="text-2xl font-light pb-1">+</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30">
+              <a href="https://maps.app.goo.gl/BWJjWYbNft93Ei4s8" target="_blank" className="flex items-center gap-2 bg-slate-800 border border-slate-600 px-6 py-3 rounded-full shadow-xl active:scale-95 transition-all text-slate-300 font-bold hover:text-white hover:border-slate-500">
+                <Icons.Location className="w-5 h-5 text-pink-500" /> Ver Ubicación
+              </a>
+            </div>
+          </div>
+
+          {/* MODALS */}
+          {modalState.type === 'product_config' && renderProductConfig()}
+
+          {modalState.type === 'cart' && (
+            <div className="fixed inset-0 z-50 bg-slate-900 flex flex-col animate-in fade-in zoom-in duration-200">
+              <div className="p-4 flex justify-between items-center border-b border-slate-800 bg-slate-800">
+                <button onClick={closeModal} className="text-slate-400 hover:text-white p-2"><Icons.Back className="w-6 h-6" /></button>
+                <span className="font-bold text-lg">TU PEDIDO ({cart.length})</span>
+                <div className="w-10" />
+              </div>
+              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                {cart.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-slate-500 opacity-50"><Icons.Cart className="w-16 h-16 mb-4" /><p>Tu carrito está vacío</p></div>
+                ) : (
+                  cart.map((item, idx) => (
+                    <div key={idx} className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col gap-2">
+                      <div className="text-[10px] font-bold text-pink-500 uppercase tracking-wider">{item.categoryName}</div>
+                      <div className="flex justify-between items-start">
+                        <div><div className="font-bold text-lg text-white">{item.productName}</div><div className="text-slate-400 text-sm">{item.variantName}</div></div>
+                        <div className="font-bold text-xl">${item.totalPrice.toFixed(2)}</div>
+                      </div>
+                      {item.elementConfig && <div className="text-xs text-slate-400 bg-slate-900/50 p-2 rounded border border-slate-800">
+                        {Object.keys(item.selections || {}).map(gid => {
+                          const grp = item.elementConfig.find(g => g.id === gid);
+                          const sels = item.selections[gid];
+                          if (!sels?.length) return null;
+                          return <div key={gid}><span className="font-semibold text-slate-300">{grp.name}:</span> {sels.map(s => s.name).join(', ')}</div>
+                        })}
+                      </div>}
+                      <div className="flex justify-end gap-3 mt-1">
+                        <button onClick={() => openModal('product_config', { product: DATA_PRODUCTS.find(p => p.id === item.productId), initialValues: item, editIndex: idx })} className="text-blue-400 text-sm flex gap-1 items-center px-2 py-1 hover:bg-slate-700 rounded"><Icons.Edit className="w-4 h-4" /> Editar</button>
+                        <button onClick={() => removeCartItem(idx)} className="text-red-400 text-sm flex gap-1 items-center px-2 py-1 hover:bg-slate-700 rounded"><Icons.Trash className="w-4 h-4" /> Borrar</button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              {cart.length > 0 && (
+                <div className="p-4 border-t border-slate-800 bg-slate-800 space-y-3">
+                  <div className="flex justify-between text-2xl font-black px-2"><span>Total</span><span>${cartTotal.toFixed(2)}</span></div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button onClick={clearCart} className="bg-red-500/10 text-red-500 border border-red-500/50 py-3 rounded-xl font-bold">Vaciar</button>
+                    <button onClick={() => openModal('delivery_select')} className="bg-emerald-600 text-white py-3 rounded-xl font-bold">Proceder</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {modalState.type === 'delivery_select' && (
+            <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur flex items-center justify-center p-6 animate-in fade-in zoom-in duration-200">
+              <div className="w-full max-w-sm bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+                <div className="p-4 border-b border-slate-700 flex justify-between items-center">
+                  <h3 className="font-bold text-lg">¿Cómo deseas tu pedido?</h3>
+                  <button onClick={() => openModal('cart')}><Icons.Close className="w-6 h-6 text-slate-400" /></button>
+                </div>
+                <div className="p-6 flex flex-col gap-4">
+                  <button onClick={() => openModal('pickup_form')} className="bg-slate-700 hover:bg-slate-600 p-6 rounded-xl flex items-center gap-4 group">
+                    <div className="p-3 bg-purple-500/20 rounded-lg text-purple-400"><Icons.Store className="w-8 h-8" /></div>
+                    <div className="text-left"><div className="font-bold text-lg text-white">Recoger en Tienda</div><div className="text-slate-400 text-sm">Sin costo extra</div></div>
+                  </button>
+                  <button onClick={() => openModal('delivery_form')} className="bg-slate-700 hover:bg-slate-600 p-6 rounded-xl flex items-center gap-4 group">
+                    <div className="p-3 bg-blue-500/20 rounded-lg text-blue-400"><Icons.Bike className="w-8 h-8" /></div>
+                    <div className="text-left"><div className="font-bold text-lg text-white">Envío a Domicilio</div><div className="text-blue-300 text-sm font-bold">Costo: ${DELIVERY_COST.toFixed(2)}</div></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {modalState.type === 'pickup_form' && <PickupForm onBack={() => openModal('delivery_select')} onSubmit={(info) => {
+            const id = Math.floor(100000 + Math.random() * 900000); // 6 digit ID
+            const finalInfo = { ...info, ticketId: id, method: 'pickup' };
+            setOrderInfo(finalInfo); openModal('ticket_result', { orderInfo: finalInfo });
+          }} />}
+
+          {modalState.type === 'delivery_form' && <DeliveryForm deliveryCost={DELIVERY_COST} onBack={() => openModal('delivery_select')} onSubmit={(info) => {
+            const id = Math.floor(100000 + Math.random() * 900000);
+            const finalInfo = { ...info, ticketId: id, method: 'delivery' };
+            setOrderInfo(finalInfo); openModal('ticket_result', { orderInfo: finalInfo });
+          }} />}
+
+          {modalState.type === 'ticket_result' && orderInfo && (
+            <TicketResultModal orderInfo={orderInfo} items={cart} total={finalTotal} deliveryCost={DELIVERY_COST}
+              onClose={() => { if (confirm("¿Salir? Se perderá el pedido.")) { setCart([]); setOrderInfo(null); closeModal(); } }}
+            />
+          )}
+
+        </div>
+      );
+    }
+
+    // --- SUBCOMPONENTS (REFINED) ---
+
+    function ProductConfigModal({ product, categoryName, initialValues, editIndex, onClose, onConfirm }) {
+      const [variant, setVariant] = useState(initialValues ? product.variants.find(v => v.id === initialValues.variantId) : product.variants[0]);
+      const [selections, setSelections] = useState(initialValues ? initialValues.selections : {});
+      const [qty, setQty] = useState(1);
+
+      // Reset selections if variant changes? No, keep them usually.
+
+      const toggleItem = (elementId, item, maxQty, allowRepeat) => {
+        const current = selections[elementId] || [];
+
+        // Count total occurrences (including repeats)
+        const totalSelected = current.length;
+
+        // Check if item already exists
+        const countOfItem = current.filter(i => i.id === item.id).length;
+
+        if (allowRepeat) {
+          // If we have room
+          if (totalSelected < maxQty) {
+            setSelections({ ...selections, [elementId]: [...current, item] });
+          } else {
+            // Maybe remove one instance of this item if clicked again? Or just prevent? 
+            // Simplest UX: click adds one until max. If max reached, clicking existing one removes it.
+            if (countOfItem > 0) {
+              // Remove one instance
+              const idx = current.findIndex(i => i.id === item.id);
+              const newArr = [...current];
+              newArr.splice(idx, 1);
+              setSelections({ ...selections, [elementId]: newArr });
+            }
+          }
+        } else {
+          // Normal toggle
+          if (countOfItem > 0) {
+            setSelections({ ...selections, [elementId]: current.filter(i => i.id !== item.id) });
+          } else {
+            if (totalSelected < maxQty) {
+              // If max is 1 (like jars), replace. If max > 1 (bases), add.
+              // Logic says: max 1 per type for Bases. max 1 total Jarabes.
+              // If it's a jarabe (max 1), replace it.
+              if (maxQty === 1 && totalSelected === 1) {
+                setSelections({ ...selections, [elementId]: [item] });
+              } else {
+                setSelections({ ...selections, [elementId]: [...current, item] });
+              }
+            }
+          }
+        }
+      };
+
+      const calculateTotal = () => {
+        let t = variant.price;
+        // Extras cost $0 in this new logic but let's keep it robust
+        Object.values(selections).flat().forEach(i => t += i.price);
+        return t;
+      };
+
+      const handleConfirm = () => {
+        // Optional: Validate Requirements (e.g. at least 1 base)
+        const itemData = {
+          productId: product.id, productName: product.name, categoryName,
+          variantId: variant.id, variantName: variant.name,
+          selections, elementConfig: product.elements, totalPrice: calculateTotal()
+        };
+        onConfirm(itemData, qty);
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 bg-slate-900 flex flex-col animate-in slide-in-from-bottom duration-300">
+          <div className="flex-1 overflow-y-auto">
+            <div className="h-40 bg-gradient-to-b from-slate-700 to-slate-800 flex items-center justify-center relative">
+              <button onClick={onClose} className="absolute top-4 left-4 bg-black/30 p-2 rounded-full text-white backdrop-blur"><Icons.Close /></button>
+              <span className="text-4xl">🍓</span>
+            </div>
+            <div className="p-5 space-y-6">
+              <div><h2 className="text-3xl font-black text-white">{product.name}</h2><p className="text-pink-500 font-bold uppercase text-sm">{categoryName}</p></div>
+
+              <div>
+                <label className="text-sm font-bold text-slate-500 uppercase mb-2 block">Tamaño</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {product.variants.map(v => (
+                    <button key={v.id} onClick={() => setVariant(v)}
+                      className={`p-3 rounded-xl border text-left transition-all ${variant.id === v.id ? 'bg-slate-700 border-pink-500 ring-1 ring-pink-500' : 'bg-slate-800 border-slate-700 text-slate-400'}`}>
+                      <div className="font-bold">{v.name}</div><div className="text-sm opacity-80">${v.price}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {product.elements.map(el => (
+                <div key={el.id}>
+                  <div className="flex justify-between items-baseline mb-2">
+                    <label className="text-sm font-bold text-slate-500 uppercase">{el.name}</label>
+                    <span className="text-xs text-slate-400">
+                      {(selections[el.id] || []).length} / {el.max}
+                      {el.allowRepeat ? ' (Repetibles)' : ''}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {el.items.map(item => {
+                      const count = (selections[el.id] || []).filter(s => s.id === item.id).length;
+                      const isSelected = count > 0;
+                      return (
+                        <button key={item.id} onClick={() => toggleItem(el.id, item, el.max, el.allowRepeat)}
+                          className={`flex justify-between items-center p-3 rounded-lg border transition-all ${isSelected ? 'bg-slate-700 border-purple-500 ring-1 ring-purple-500' : 'bg-slate-800 border-slate-700 text-slate-400'}`}>
+                          <span>{item.name} {count > 1 ? `x${count}` : ''}</span>
+                          <span className="text-xs font-mono">{count > 0 && el.allowRepeat ? '+' : (isSelected ? '✓' : '')}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-slate-800 p-4 border-t border-slate-700 flex gap-4 items-center">
+            {!initialValues && (
+              <div className="flex items-center bg-slate-900 rounded-lg p-1 border border-slate-700">
+                <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-10 text-slate-400">-</button>
+                <span className="w-8 text-center font-bold text-white">{qty}</span>
+                <button onClick={() => setQty(q => q + 1)} className="w-10 h-10 text-white">+</button>
+              </div>
+            )}
+            <button onClick={handleConfirm} className="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-bold py-3.5 rounded-xl shadow-lg flex justify-between px-6">
+              <span>{initialValues ? 'Guardar' : 'Agregar'}</span><span>${(calculateTotal() * qty).toFixed(2)}</span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function PickupForm({ onBack, onSubmit }) {
+      const [data, setData] = useState({ name: '', lastname: '', phone: '' });
+      const isValid = data.name && data.lastname && data.phone.length >= 10;
+      return (
+        <div className="fixed inset-0 z-[60] bg-slate-900 flex flex-col animate-in slide-in-from-right duration-200">
+          <div className="p-4 bg-slate-800 border-b border-slate-700 flex items-center gap-3">
+            <button onClick={onBack}><Icons.Back className="w-6 h-6 text-slate-300" /></button><h2 className="font-bold text-lg">Recolectar en Tienda</h2>
+          </div>
+          <div className="flex-1 p-6 space-y-4">
+            <div><label className="block text-sm text-slate-400 mb-1">Nombre</label><input type="text" className="w-full bg-slate-800 border-slate-700 rounded-lg p-3 outline-none focus:border-pink-500 border" value={data.name} onChange={e => setData({ ...data, name: e.target.value })} placeholder="Tu nombre" /></div>
+            <div><label className="block text-sm text-slate-400 mb-1">Apellido</label><input type="text" className="w-full bg-slate-800 border-slate-700 rounded-lg p-3 outline-none focus:border-pink-500 border" value={data.lastname} onChange={e => setData({ ...data, lastname: e.target.value })} placeholder="Tu apellido" /></div>
+            <div><label className="block text-sm text-slate-400 mb-1">Celular (+52)</label><input type="tel" className="w-full bg-slate-800 border-slate-700 rounded-lg p-3 outline-none focus:border-pink-500 border" value={data.phone} onChange={e => setData({ ...data, phone: e.target.value })} placeholder="10 dígitos" /></div>
+          </div>
+          <div className="p-4 bg-slate-800 border-t border-slate-700">
+            <button disabled={!isValid} onClick={() => onSubmit({ ...data, contact: `${data.name} ${data.lastname} (${data.phone})` })} className="w-full bg-emerald-600 disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-lg">GENERAR TICKET</button>
+          </div>
+        </div>
+      )
+    }
+
+    function DeliveryForm({ deliveryCost, onBack, onSubmit }) {
+      const [data, setData] = useState({ name: '', lastname: '', whatsapp: '', colonia: COLONIAS_APODACA[0], street: '', number: '', desc: '' });
+      const isValid = data.name && data.lastname && data.whatsapp && data.street && data.number;
+      return (
+        <div className="fixed inset-0 z-[60] bg-slate-900 flex flex-col animate-in slide-in-from-right duration-200">
+          <div className="p-4 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
+            <div className="flex items-center gap-3"><button onClick={onBack}><Icons.Back className="w-6 h-6 text-slate-300" /></button><h2 className="font-bold text-lg">Envío a Domicilio</h2></div>
+            <div className="text-xs bg-slate-700 px-2 py-1 rounded text-blue-300">Costo: ${deliveryCost}</div>
+          </div>
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex gap-3">
+              <div className="flex-1"><label className="block text-sm text-slate-400 mb-1">Nombre</label><input type="text" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.name} onChange={e => setData({ ...data, name: e.target.value })} /></div>
+              <div className="flex-1"><label className="block text-sm text-slate-400 mb-1">Apellido</label><input type="text" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.lastname} onChange={e => setData({ ...data, lastname: e.target.value })} /></div>
+            </div>
+            <div><label className="block text-sm text-slate-400 mb-1">WhatsApp (+52)</label><input type="tel" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.whatsapp} onChange={e => setData({ ...data, whatsapp: e.target.value })} /></div>
+            <div><label className="block text-sm text-slate-400 mb-1">Colonia (Apodaca)</label>
+              <select className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.colonia} onChange={e => setData({ ...data, colonia: e.target.value })}>
+                {COLONIAS_APODACA.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div className="flex gap-3">
+              <div className="flex-1"><label className="block text-sm text-slate-400 mb-1">Calle</label><input type="text" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.street} onChange={e => setData({ ...data, street: e.target.value })} /></div>
+              <div className="w-24"><label className="block text-sm text-slate-400 mb-1">Número</label><input type="text" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.number} onChange={e => setData({ ...data, number: e.target.value })} /></div>
+            </div>
+            <div><label className="block text-sm text-slate-400 mb-1">Referencias</label><textarea rows="3" maxLength={500} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500 resize-none" value={data.desc} onChange={e => setData({ ...data, desc: e.target.value })} placeholder="Color, entre calles..."></textarea></div>
+          </div>
+          <div className="p-4 bg-slate-800 border-t border-slate-700 flex gap-3">
+            <button onClick={onBack} className="flex-1 bg-slate-700 py-4 rounded-xl text-slate-300 font-bold">Cancelar</button>
+            <button disabled={!isValid} onClick={() => onSubmit({ ...data, contact: data.whatsapp, address: `${data.street} #${data.number}`, description: data.desc, colonia: data.colonia })} className="flex-[2] bg-emerald-600 disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-lg">GENERAR TICKET</button>
+          </div>
+        </div>
+      )
+    }
+
+    function TicketResultModal({ orderInfo, items, total, deliveryCost, onClose }) {
+      return (
+        <div className="fixed inset-0 z-[70] bg-slate-900 overflow-y-auto animate-in fade-in duration-500">
+          <div className="min-h-full flex flex-col items-center justify-center p-6 space-y-6">
+            <div className="w-20 h-20 rounded-full bg-emerald-500 flex items-center justify-center shadow-2xl shadow-emerald-500/50 mb-4 animate-bounce"><Icons.Check className="w-10 h-10 text-white" /></div>
+            <h1 className="text-3xl font-black text-center text-white">¡Pedido Generado!</h1>
+            <div className="w-full max-w-md space-y-4">
+
+              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <div className="font-bold text-slate-300 mb-2 flex items-center gap-2"><div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center text-xs">1</div> Realiza el Pago</div>
+                <button onClick={() => generatePaymentImage(orderInfo.ticketId, total)} className="w-full bg-white text-slate-900 font-bold py-3 rounded-lg hover:bg-slate-100 flex items-center justify-center gap-2">
+                  <Icons.Money className="w-5 h-5" /> Ver Datos de Pago (PNG)
+                </button>
+              </div>
+
+              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <div className="font-bold text-slate-300 mb-2 flex items-center gap-2"><div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center text-xs">2</div> Guarda tu Ticket</div>
+                <button onClick={() => generateTicketImage(items, orderInfo, total, deliveryCost)} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-500 flex items-center justify-center gap-2">
+                  <Icons.Download className="w-5 h-5" /> Descargar Ticket (PNG)
+                </button>
+                <div className="mt-4 text-center">
+                  <div className="text-xs text-slate-500">ORDEN</div>
+                  <div className="font-mono text-xl text-yellow-500 font-bold tracking-widest">#{orderInfo.ticketId}</div>
+                </div>
+              </div>
+
+              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <div className="font-bold text-slate-300 mb-2 flex items-center gap-2"><div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center text-xs">3</div> Envía Comprobante</div>
+                <a href="https://wa.me/+528111200176" target="_blank" className="w-full bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-400 flex items-center justify-center gap-2"><Icons.Whatsapp className="w-5 h-5" /> Abrir WhatsApp</a>
+              </div>
+
+              <div className="flex gap-2">
+                {orderInfo.method !== 'delivery' && (
+                  <a href="https://maps.app.goo.gl/BWJjWYbNft93Ei4s8" target="_blank" className="flex-1 bg-slate-700 text-slate-300 font-bold py-3 rounded-lg hover:bg-slate-600 flex items-center justify-center gap-2">
+                    <Icons.Location className="w-4 h-4" /> Ver Ubicación
+                  </a>
+                )}
+                <button onClick={onClose} className="flex-1 bg-slate-700 text-emerald-400 font-bold py-3 rounded-lg hover:bg-slate-600 border border-emerald-500/30">Listo / Inicio</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    const { createRoot } = ReactDOM;
+    createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+
+</html>
