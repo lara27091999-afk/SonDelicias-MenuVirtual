@@ -47,8 +47,136 @@
       Whatsapp: (p) => <Icon char="💬" {...p} />,
       Download: (p) => <Icon char="⬇️" {...p} />,
       Store: (p) => <Icon char="🏪" {...p} />,
-      Bike: (p) => <Icon char="🏍️" {...p} />
+      Bike: (p) => <Icon char="🏍️" {...p} />,
+      Clock: (p) => <Icon char="🕐" {...p} />,
+      Phone: (p) => <Icon char="📱" {...p} />
     };
+
+    // --- SCHEDULE VERIFICATION ---
+    // Virtual store hours: 5:30pm to 8:30pm (17:30 - 20:30)
+    // Physical store hours: 5:30pm to 10:00pm (17:30 - 22:00)
+    // Closed: Saturday (day 6)
+    // Open: Sunday (0), Monday (1), Tuesday (2), Wednesday (3), Thursday (4), Friday (5)
+
+    const isVirtualStoreOpen = () => {
+      const now = new Date();
+      const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const currentTime = hours * 60 + minutes; // Convert to minutes since midnight
+
+      // Saturday is always closed
+      if (dayOfWeek === 6) return false;
+
+      // Virtual store hours: 17:30 (5:30pm) to 20:30 (8:30pm)
+      const openTime = 17 * 60 + 30;  // 17:30 = 1050 minutes
+      const closeTime = 20 * 60 + 30; // 20:30 = 1230 minutes
+
+      return currentTime >= openTime && currentTime < closeTime;
+    };
+
+    // --- CLOSED MODAL COMPONENT ---
+    function ClosedModal() {
+      const GOOGLE_MAPS_LINK = "https://maps.app.goo.gl/BWJjWYbNft93Ei4s8";
+
+      const virtualHours = [
+        { day: "Domingo", hours: "5:30pm a 8:30pm" },
+        { day: "Lunes", hours: "5:30pm a 8:30pm" },
+        { day: "Martes", hours: "5:30pm a 8:30pm" },
+        { day: "Miércoles", hours: "5:30pm a 8:30pm" },
+        { day: "Jueves", hours: "5:30pm a 8:30pm" },
+        { day: "Viernes", hours: "5:30pm a 8:30pm" },
+        { day: "Sábado", hours: "Cerrado", closed: true }
+      ];
+
+      const physicalHours = [
+        { day: "Domingo", hours: "5:30pm a 10:00pm" },
+        { day: "Lunes", hours: "5:30pm a 10:00pm" },
+        { day: "Martes", hours: "5:30pm a 10:00pm" },
+        { day: "Miércoles", hours: "5:30pm a 10:00pm" },
+        { day: "Jueves", hours: "5:30pm a 10:00pm" },
+        { day: "Viernes", hours: "5:30pm a 10:00pm" },
+        { day: "Sábado", hours: "Cerrado", closed: true }
+      ];
+
+      return (
+        <div className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-2xl bg-gradient-to-b from-slate-800 to-slate-900 rounded-3xl border border-slate-700 shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-pink-600 to-purple-600 p-6 text-center">
+              <div className="text-5xl mb-3">😔</div>
+              <h1 className="text-2xl md:text-3xl font-black text-white mb-2">Lo sentimos, estamos cerrados</h1>
+              <p className="text-pink-100 text-sm md:text-base">Nuestros horarios para el menú virtual son:</p>
+            </div>
+
+            {/* Schedule Grid */}
+            <div className="p-4 md:p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                {/* Virtual Store Hours - Left */}
+                <div className="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
+                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-700">
+                    <div className="p-2 bg-pink-500/20 rounded-lg">
+                      <Icons.Phone className="w-5 h-5 text-pink-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white text-sm md:text-base">Horario Menú Virtual</h3>
+                      <p className="text-xs text-slate-400">Pedidos en línea</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {virtualHours.map((item, idx) => (
+                      <div key={idx} className={`flex justify-between text-sm ${item.closed ? 'text-red-400' : 'text-slate-300'}`}>
+                        <span className="font-medium">{item.day}:</span>
+                        <span className={item.closed ? 'font-bold' : ''}>{item.hours}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Physical Store Hours - Right */}
+                <div className="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
+                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-700">
+                    <div className="p-2 bg-purple-500/20 rounded-lg">
+                      <Icons.Store className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white text-sm md:text-base">Horario Tienda Física</h3>
+                      <p className="text-xs text-slate-400">Visítanos en persona</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {physicalHours.map((item, idx) => (
+                      <div key={idx} className={`flex justify-between text-sm ${item.closed ? 'text-red-400' : 'text-slate-300'}`}>
+                        <span className="font-medium">{item.day}:</span>
+                        <span className={item.closed ? 'font-bold' : ''}>{item.hours}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Location Button */}
+                  <a
+                    href={GOOGLE_MAPS_LINK}
+                    target="_blank"
+                    className="mt-4 w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold py-3 rounded-xl hover:from-pink-500 hover:to-purple-500 flex items-center justify-center gap-2 shadow-lg shadow-pink-900/30 transition-all active:scale-95"
+                  >
+                    <Icons.Location className="w-5 h-5" /> Ubicación
+                  </a>
+                </div>
+
+              </div>
+            </div>
+
+            {/* Footer Message */}
+            <div className="px-6 pb-6 text-center">
+              <p className="text-slate-400 text-xs md:text-sm">
+                ¡Gracias por tu interés! Regresa dentro de nuestro horario de atención 🍓
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     // --- CONSTANTS ---
     const DELIVERY_COST = 25.00;
@@ -432,6 +560,18 @@
       const [cart, setCart] = useState([]);
       const [currentCategory, setCurrentCategory] = useState(DATA_CATEGORIES[0].id);
 
+      // Check if virtual store is open on initial load
+      const [isStoreOpen, setIsStoreOpen] = useState(isVirtualStoreOpen());
+
+      // Periodically check store status every minute
+      useEffect(() => {
+        const checkInterval = setInterval(() => {
+          setIsStoreOpen(isVirtualStoreOpen());
+        }, 60000); // Check every minute
+
+        return () => clearInterval(checkInterval);
+      }, []);
+
       useEffect(() => {
         const handleBeforeUnload = (e) => {
           if (cart.length > 0) {
@@ -492,6 +632,9 @@
 
       return (
         <div className="min-h-screen bg-slate-900 text-white font-sans overflow-x-hidden selection:bg-pink-500 selection:text-white pb-20">
+          {/* CLOSED MODAL - Shows when store is closed */}
+          {!isStoreOpen && <ClosedModal />}
+
           {/* HEADER */}
           <div className="fixed top-0 left-0 right-0 h-16 bg-slate-800/90 backdrop-blur-md z-40 px-4 flex items-center justify-between border-b border-slate-700 shadow-lg">
             <h1 className="font-bold text-xl tracking-wider text-pink-500">MENÚ VIRTUAL</h1>
