@@ -53,8 +53,8 @@
     };
 
     // --- SCHEDULE VERIFICATION ---
-    // Virtual store hours: 5:30pm to 8:30pm (17:30 - 20:30)
-    // Physical store hours: 5:30pm to 10:00pm (17:30 - 22:00)
+    // Virtual store hours: 3:00pm to 10:30pm (15:00 - 22:30)
+    // Physical store hours: 5:00pm to 10:00pm (17:00 - 22:00)
     // Closed: Saturday (day 6)
     // Open: Sunday (0), Monday (1), Tuesday (2), Wednesday (3), Thursday (4), Friday (5)
 
@@ -68,24 +68,24 @@
       // Saturday is always closed
       if (dayOfWeek === 6) return false;
 
-      // Virtual store hours: 17:30 (5:30pm) to 20:30 (8:30pm)
-      const openTime = 17 * 60 + 30;  // 17:30 = 1050 minutes
-      const closeTime = 20 * 60 + 30; // 20:30 = 1230 minutes
+      // Virtual store hours: 15:00 (3:00pm) to 22:30 (10:30pm)
+      const openTime = 15 * 60;  // 15:00 = 900 minutes
+      const closeTime = 22 * 60 + 30; // 22:30 = 1350 minutes
 
       return currentTime >= openTime && currentTime < closeTime;
     };
 
     // --- CLOSED MODAL COMPONENT ---
-    function ClosedModal() {
+    function ClosedModal({ onClose }) {
       const GOOGLE_MAPS_LINK = "https://maps.app.goo.gl/BWJjWYbNft93Ei4s8";
 
       const virtualHours = [
-        { day: "Domingo", hours: "5:30pm a 8:30pm" },
-        { day: "Lunes", hours: "5:30pm a 8:30pm" },
-        { day: "Martes", hours: "5:30pm a 8:30pm" },
-        { day: "Miércoles", hours: "5:30pm a 8:30pm" },
-        { day: "Jueves", hours: "5:30pm a 8:30pm" },
-        { day: "Viernes", hours: "5:30pm a 8:30pm" },
+        { day: "Domingo", hours: "3:00pm a 10:30pm" },
+        { day: "Lunes", hours: "3:00pm a 10:30pm" },
+        { day: "Martes", hours: "3:00pm a 10:30pm" },
+        { day: "Miércoles", hours: "3:00pm a 10:30pm" },
+        { day: "Jueves", hours: "3:00pm a 10:30pm" },
+        { day: "Viernes", hours: "3:00pm a 10:30pm" },
         { day: "Sábado", hours: "Cerrado", closed: true }
       ];
 
@@ -103,10 +103,15 @@
         <div className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="w-full max-w-2xl bg-gradient-to-b from-slate-800 to-slate-900 rounded-3xl border border-slate-700 shadow-2xl overflow-hidden">
             {/* Header */}
-            <div className="bg-gradient-to-r from-pink-600 to-purple-600 p-6 text-center">
-              <div className="text-5xl mb-3">😔</div>
-              <h1 className="text-2xl md:text-3xl font-black text-white mb-2">Lo sentimos, estamos cerrados</h1>
-              <p className="text-pink-100 text-sm md:text-base">Nuestros horarios son:</p>
+            <div className="bg-gradient-to-r from-pink-600 to-purple-600 p-6 text-center relative">
+              {onClose && (
+                <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white font-bold transition-all">
+                  ✕
+                </button>
+              )}
+              <div className="text-5xl mb-3">{onClose ? "🕐" : "😔"}</div>
+              <h1 className="text-2xl md:text-3xl font-black text-white mb-2">{onClose ? "Nuestros Horarios" : "Lo sentimos, estamos cerrados"}</h1>
+              <p className="text-pink-100 text-sm md:text-base">{onClose ? "Visítanos en estos horarios:" : "Nuestros horarios son:"}</p>
             </div>
 
             {/* Schedule Grid */}
@@ -198,11 +203,13 @@
 
     const DATA_CATEGORIES = [
       { id: 1, name: 'FRESAS CON CREMA' },
-      { id: 1763753318246, name: 'FRAPPES' }
+      { id: 2, name: 'BEBIDAS' },
+      { id: 3, name: 'COMIDAS' }
     ];
 
     // UPDATED PRODUCT DATA (Prices $0 for extras)
     const DATA_PRODUCTS = [
+      // ===== FRESAS CON CREMA (MANTENIDA) =====
       {
         "id": 1, "name": "CHICAS", "categoryId": 1,
         "variants": [
@@ -260,18 +267,137 @@
           { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella Liq", "price": 0 }] }
         ]
       },
+
+      // ===== BEBIDAS =====
+      // FRAPPES
       {
-        "id": 4, "name": "NORMAL", "categoryId": 1763753318246,
+        "id": 4, "name": "FRAPPES", "categoryId": 2,
         "variants": [
-          { "id": "vf1", "name": "OREO", "price": 65 },
-          { "id": "vf2", "name": "GANSITO", "price": 75 },
-          { "id": "vf3", "name": "PINGÜINO", "price": 75 },
-          { "id": "vf4", "name": "CHOCORROL", "price": 75 },
-          { "id": "vf5", "name": "BUBULUBU", "price": 75 },
-          { "id": "vf6", "name": "KINDER BUENO", "price": 75 },
-          { "id": "vf7", "name": "M&M´s", "price": 75 }
+          { "id": "f1", "name": "ICE CEREZA", "price": 70 },
+          { "id": "f2", "name": "ICE MORA AZUL", "price": 70 },
+          { "id": "f3", "name": "PIÑA COLADA", "price": 70 },
+          { "id": "f4", "name": "CHAMOYADA DE PIÑA", "price": 70 },
+          { "id": "f5", "name": "MANGO", "price": 70 },
+          { "id": "f6", "name": "MANGO LECCHE", "price": 80 },
+          { "id": "f7", "name": "MAZAPAN", "price": 80 },
+          { "id": "f8", "name": "PEPINO", "price": 70 },
+          { "id": "f9", "name": "FRESAS CON CREMA", "price": 80 },
+          { "id": "f10", "name": "GANSITO", "price": 80 },
+          { "id": "f11", "name": "PINGUINO", "price": 80 },
+          { "id": "f12", "name": "CHOCO ROL", "price": 80 },
+          { "id": "f13", "name": "OREO", "price": 80 },
+          { "id": "f14", "name": "KINDER DELICE", "price": 80 },
+          { "id": "f15", "name": "FERRERO ROCHER", "price": 80 },
+          { "id": "f16", "name": "NUTELLA", "price": 80 },
+          { "id": "f17", "name": "FRUTOS ROJOS", "price": 80 }
         ],
         "elements": []
+      },
+      // LICUADOS
+      {
+        "id": 5, "name": "LICUADOS", "categoryId": 2,
+        "variants": [
+          { "id": "l1", "name": "FRESA", "price": 80 },
+          { "id": "l2", "name": "PLATANO", "price": 80 },
+          { "id": "l3", "name": "CHOCOLATE", "price": 80 }
+        ],
+        "elements": []
+      },
+
+      // ===== COMIDAS =====
+      // CREPA DULCE
+      {
+        "id": 6, "name": "CREPA DULCE", "categoryId": 3,
+        "variants": [
+          { "id": "cd1", "name": "NUTELLA", "price": 70 },
+          { "id": "cd2", "name": "QUESO CREMA", "price": 70 }
+        ],
+        "elements": [
+          { "id": "fruta", "name": "FRUTA", "type": "fruta", "max": 2, "items": [{ "id": "fr1", "name": "Fresa", "price": 0 }, { "id": "fr2", "name": "Platano", "price": 0 }] },
+          { "id": "toppings", "name": "TOPPING", "type": "topping", "max": 2, "allowRepeat": true, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
+          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella", "price": 0 }] },
+          { "id": "base", "name": "Base", "type": "base", "max": 1, "items": [{ "id": "b1", "name": "Chantilly", "price": 0 }] }
+        ]
+      },
+      // CREPA SALADA
+      {
+        "id": 7, "name": "CREPA SALADA", "categoryId": 3,
+        "variants": [
+          { "id": "cs1", "name": "JAMON Y QUESO MANCHEGO", "price": 70 },
+          { "id": "cs2", "name": "JAMON Y QUESO CREMA", "price": 70 }
+        ],
+        "elements": []
+      },
+      // REBANADA TORTUGA
+      {
+        "id": 8, "name": "REBANADA", "categoryId": 3,
+        "variants": [
+          { "id": "r1", "name": "TORTUGA", "price": 65 }
+        ],
+        "elements": [
+          { "id": "toppings", "name": "TOPPING", "type": "topping", "max": 2, "allowRepeat": true, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
+          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella", "price": 0 }] }
+        ]
+      },
+      // BANDERILLA NORMAL
+      {
+        "id": 9, "name": "BANDERILLA NORMAL", "categoryId": 3,
+        "variants": [
+          { "id": "bn1", "name": "CLASICA DE PAVO", "price": 60 },
+          { "id": "bn2", "name": "CHEETOS FLAMING HOT DE PAVO", "price": 75 },
+          { "id": "bn3", "name": "PAPA FRITA DE PAVO", "price": 75 },
+          { "id": "bn4", "name": "CHEETOS QUESO DE PAVO", "price": 75 },
+          { "id": "bn5", "name": "TAKIS FUEGO DE PAVO", "price": 75 },
+          { "id": "bn6", "name": "JALAPEÑO DE PAVO", "price": 75 },
+          { "id": "bn7", "name": "BONELESS DE PAVO", "price": 85 },
+          { "id": "bn8", "name": "CLASICA DE RES", "price": 70 },
+          { "id": "bn9", "name": "CHEETOS FLAMING HOT DE RES", "price": 85 },
+          { "id": "bn10", "name": "PAPA FRITA DE RES", "price": 85 },
+          { "id": "bn11", "name": "CHEETOS QUESO DE RES", "price": 85 },
+          { "id": "bn12", "name": "TAKIS FUEGO DE RES", "price": 85 },
+          { "id": "bn13", "name": "JALAPEÑO DE RES", "price": 85 },
+          { "id": "bn14", "name": "BONELESS DE RES", "price": 85 }
+        ],
+        "elements": [
+          { "id": "aderezos", "name": "Aderezos", "type": "aderezo", "max": 3, "allowRepeat": true, "items": [{ "id": "a1", "name": "Mayonesa", "price": 0 }, { "id": "a2", "name": "Catsup", "price": 0 }, { "id": "a3", "name": "Mostaza", "price": 0 }] },
+          { "id": "salsas", "name": "Salsas", "type": "salsa", "max": 3, "allowRepeat": true, "items": [{ "id": "s1", "name": "BBQ", "price": 0 }, { "id": "s2", "name": "Tocino", "price": 0 }, { "id": "s3", "name": "Chipotle", "price": 0 }, { "id": "s4", "name": "Picante", "price": 0 }, { "id": "s5", "name": "Wichol", "price": 0 }, { "id": "s6", "name": "Botanera", "price": 0 }, { "id": "s7", "name": "Queso", "price": 0 }] }
+        ]
+      },
+      // BANDERILLA CON QUESO
+      {
+        "id": 10, "name": "BANDERILLA CON QUESO", "categoryId": 3,
+        "variants": [
+          { "id": "bq1", "name": "CLASICA DE PAVO", "price": 70 },
+          { "id": "bq2", "name": "CHEETOS FLAMING HOT DE PAVO", "price": 85 },
+          { "id": "bq3", "name": "PAPA FRITA DE PAVO", "price": 85 },
+          { "id": "bq4", "name": "CHEETOS QUESO DE PAVO", "price": 85 },
+          { "id": "bq5", "name": "TAKIS FUEGO DE PAVO", "price": 85 },
+          { "id": "bq6", "name": "JALAPEÑO DE PAVO", "price": 85 },
+          { "id": "bq7", "name": "BONELESS DE PAVO", "price": 95 },
+          { "id": "bq8", "name": "CLASICA DE RES", "price": 80 },
+          { "id": "bq9", "name": "CHEETOS FLAMING HOT DE RES", "price": 95 },
+          { "id": "bq10", "name": "PAPA FRITA DE RES", "price": 95 },
+          { "id": "bq11", "name": "CHEETOS QUESO DE RES", "price": 95 },
+          { "id": "bq12", "name": "TAKIS FUEGO DE RES", "price": 95 },
+          { "id": "bq13", "name": "JALAPEÑO DE RES", "price": 95 },
+          { "id": "bq14", "name": "BONELESS DE RES", "price": 95 }
+        ],
+        "elements": [
+          { "id": "aderezos", "name": "Aderezos", "type": "aderezo", "max": 3, "allowRepeat": true, "items": [{ "id": "a1", "name": "Mayonesa", "price": 0 }, { "id": "a2", "name": "Catsup", "price": 0 }, { "id": "a3", "name": "Mostaza", "price": 0 }] },
+          { "id": "salsas", "name": "Salsas", "type": "salsa", "max": 3, "allowRepeat": true, "items": [{ "id": "s1", "name": "BBQ", "price": 0 }, { "id": "s2", "name": "Tocino", "price": 0 }, { "id": "s3", "name": "Chipotle", "price": 0 }, { "id": "s4", "name": "Picante", "price": 0 }, { "id": "s5", "name": "Wichol", "price": 0 }, { "id": "s6", "name": "Botanera", "price": 0 }, { "id": "s7", "name": "Queso", "price": 0 }] }
+        ]
+      },
+      // TOSTITOS
+      {
+        "id": 11, "name": "TOSTITOS", "categoryId": 3,
+        "variants": [
+          { "id": "to1", "name": "VERDES", "price": 80 },
+          { "id": "to2", "name": "MORADOS", "price": 80 }
+        ],
+        "elements": [
+          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Elote", "price": 0 }, { "id": "b2", "name": "Crema", "price": 0 }, { "id": "b3", "name": "Queso amarillo", "price": 0 }] },
+          { "id": "salsas", "name": "Salsas", "type": "salsa", "max": 3, "allowRepeat": true, "items": [{ "id": "s1", "name": "BBQ", "price": 0 }, { "id": "s2", "name": "Tocino", "price": 0 }, { "id": "s3", "name": "Chipotle", "price": 0 }, { "id": "s4", "name": "Picante", "price": 0 }, { "id": "s5", "name": "Wichol", "price": 0 }, { "id": "s6", "name": "Botanera", "price": 0 }, { "id": "s7", "name": "Queso", "price": 0 }] }
+        ]
       }
     ];
 
@@ -297,7 +423,7 @@
       return y + lineHeight;
     }
 
-    const generateTicketImage = (items, orderInfo, total, deliveryCost) => {
+    const generateTicketImage = (items, orderInfo, total) => {
 
       // Helper function that handles drawing (or measuring)
       // returns the final Y position
@@ -333,34 +459,6 @@
 
         let y = 140;
 
-        // 2. Client Info
-        drawText("DATOS DEL CLIENTE:", 30, y, 'bold 20px sans-serif', '#0f172a'); y += 30;
-        drawText(`NOMBRE: ${orderInfo.name} ${orderInfo.lastname || ''}`, 40, y, 'bold 16px sans-serif', '#334155'); y += 25;
-        drawText(`WHATSAPP: +52 ${orderInfo.contact.replace(/[^\d]/g, '').slice(-10)}`, 40, y, 'bold 16px sans-serif', '#334155'); y += 35;
-
-        // Delivery Info
-        if (orderInfo.method === 'delivery') {
-          drawRect(30, y - 10, 440, 110, '#e0f2fe', '#bfdbfe');
-          drawText("📍 ENVÍO A DOMICILIO:", 45, y + 15, 'bold 16px sans-serif', '#0369a1'); y += 25;
-          drawText(`${orderInfo.colonia}`, 45, y + 15, '15px sans-serif', '#1e3a8a'); y += 20;
-          drawText(`${orderInfo.address}`, 45, y + 15, '15px sans-serif', '#1e3a8a'); y += 20;
-
-          // Wrap text for description
-          if (!onlyMeasure) {
-            ctx.font = '15px sans-serif';
-            ctx.fillStyle = '#1e3a8a';
-            ctx.textAlign = 'left';
-            y = wrapText(ctx, `Ref: ${orderInfo.description}`, 45, y + 15, 410, 20) + 15;
-          } else {
-            // Must simulate wrapText height increase
-            const dummyCtx = document.createElement('canvas').getContext('2d');
-            dummyCtx.font = '15px sans-serif';
-            // Mock wrapText measure
-            y = wrapText(dummyCtx, `Ref: ${orderInfo.description}`, 45, y + 15, 410, 20) + 15;
-          }
-        }
-
-        y += 20;
         // Divider
         if (!onlyMeasure) {
           ctx.strokeStyle = '#94a3b8';
@@ -370,7 +468,7 @@
         }
         y += 30;
 
-        // 3. Order Items
+        // 2. Order Items
         drawText("DATOS DEL PEDIDO:", 30, y, 'bold 20px sans-serif', '#0f172a'); y += 30;
 
         items.forEach(item => {
@@ -411,23 +509,7 @@
 
         y += 20;
 
-        // 4. Totals
-        if (orderInfo.method === 'delivery') {
-          if (!onlyMeasure) {
-            ctx.font = '18px sans-serif';
-            ctx.fillStyle = '#334155';
-            ctx.textAlign = 'left'; ctx.fillText("Subtotal:", 40, y);
-            ctx.textAlign = 'right'; ctx.fillText(`$${(total - deliveryCost).toFixed(2)}`, 460, y);
-          }
-          y += 30;
-          if (!onlyMeasure) {
-            ctx.textAlign = 'left'; ctx.fillText("Envío:", 40, y);
-            ctx.textAlign = 'right'; ctx.fillText(`$${deliveryCost.toFixed(2)}`, 460, y);
-          }
-          y += 50; // Space
-        }
-
-        // Total Bar
+        // 3. Total Bar
         drawRect(30, y, 440, 70, '#0f172a');
         if (!onlyMeasure) {
           ctx.fillStyle = '#ffffff';
@@ -439,7 +521,7 @@
 
         y += 100; // Space after total
 
-        // 5. Footer ID
+        // 4. Footer ID
         drawText(`#${orderInfo.ticketId}`, 250, y, 'bold 30px monospace', '#94a3b8', 'center');
 
         y += 50; // Bottom Padding
@@ -562,6 +644,7 @@
 
       // Check if virtual store is open on initial load
       const [isStoreOpen, setIsStoreOpen] = useState(isVirtualStoreOpen());
+      const [showScheduleModal, setShowScheduleModal] = useState(false);
 
       // Periodically check store status every minute
       useEffect(() => {
@@ -611,7 +694,7 @@
 
       const [orderInfo, setOrderInfo] = useState(null);
       const cartTotal = cart.reduce((acc, el) => acc + el.totalPrice, 0);
-      const finalTotal = orderInfo?.method === 'delivery' ? cartTotal + DELIVERY_COST : cartTotal;
+      const finalTotal = cartTotal;
 
       const renderProductConfig = () => (
         <ProductConfigModal
@@ -632,8 +715,8 @@
 
       return (
         <div className="min-h-screen bg-slate-900 text-white font-sans overflow-x-hidden selection:bg-pink-500 selection:text-white pb-20">
-          {/* CLOSED MODAL - Shows when store is closed */}
-          {!isStoreOpen && <ClosedModal />}
+          {/* CLOSED MODAL - Shows when store is closed OR manually opened */}
+          {(!isStoreOpen || showScheduleModal) && <ClosedModal onClose={showScheduleModal ? () => setShowScheduleModal(false) : null} />}
 
           {/* HEADER */}
           <div className="fixed top-0 left-0 right-0 h-16 bg-slate-800/90 backdrop-blur-md z-40 px-4 flex items-center justify-between border-b border-slate-700 shadow-lg">
@@ -670,10 +753,13 @@
               ))}
             </div>
 
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30">
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-3">
               <a href="https://maps.app.goo.gl/BWJjWYbNft93Ei4s8" target="_blank" className="flex items-center gap-2 bg-slate-800 border border-slate-600 px-6 py-3 rounded-full shadow-xl active:scale-95 transition-all text-slate-300 font-bold hover:text-white hover:border-slate-500">
                 <Icons.Location className="w-5 h-5 text-pink-500" /> Ver Ubicación
               </a>
+              <button onClick={() => setShowScheduleModal(true)} className="flex items-center gap-2 bg-slate-800 border border-slate-600 px-6 py-3 rounded-full shadow-xl active:scale-95 transition-all text-slate-300 font-bold hover:text-white hover:border-slate-500">
+                <Icons.Clock className="w-5 h-5 text-purple-500" /> Horarios
+              </button>
             </div>
           </div>
 
@@ -719,7 +805,12 @@
                   <div className="flex justify-between text-2xl font-black px-2"><span>Total</span><span>${cartTotal.toFixed(2)}</span></div>
                   <div className="grid grid-cols-2 gap-3">
                     <button onClick={clearCart} className="bg-red-500/10 text-red-500 border border-red-500/50 py-3 rounded-xl font-bold">Vaciar</button>
-                    <button onClick={() => openModal('delivery_select')} className="bg-emerald-600 text-white py-3 rounded-xl font-bold">Proceder</button>
+                    <button onClick={() => {
+                      const id = Math.floor(100000 + Math.random() * 900000);
+                      const finalInfo = { ticketId: id };
+                      setOrderInfo(finalInfo);
+                      openModal('ticket_result', { orderInfo: finalInfo });
+                    }} className="bg-emerald-600 text-white py-3 rounded-xl font-bold">Proceder</button>
                   </div>
                 </div>
               )}
@@ -760,7 +851,7 @@
           }} />}
 
           {modalState.type === 'ticket_result' && orderInfo && (
-            <TicketResultModal orderInfo={orderInfo} items={cart} total={finalTotal} deliveryCost={DELIVERY_COST}
+            <TicketResultModal orderInfo={orderInfo} items={cart} total={finalTotal}
               onClose={() => { if (confirm("¿Salir? Se perderá el pedido.")) { setCart([]); setOrderInfo(null); closeModal(); } }}
             />
           )}
@@ -957,7 +1048,7 @@
       )
     }
 
-    function TicketResultModal({ orderInfo, items, total, deliveryCost, onClose }) {
+    function TicketResultModal({ orderInfo, items, total, onClose }) {
       return (
         <div className="fixed inset-0 z-[70] bg-slate-900 overflow-y-auto animate-in fade-in duration-500">
           <div className="min-h-full flex flex-col items-center justify-center p-6 space-y-6">
@@ -966,15 +1057,8 @@
             <div className="w-full max-w-md space-y-4">
 
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="font-bold text-slate-300 mb-2 flex items-center gap-2"><div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center text-xs">1</div> Realiza el Pago</div>
-                <button onClick={() => generatePaymentImage(orderInfo.ticketId, total)} className="w-full bg-white text-slate-900 font-bold py-3 rounded-lg hover:bg-slate-100 flex items-center justify-center gap-2">
-                  <Icons.Money className="w-5 h-5" /> Ver Datos de Pago (PNG)
-                </button>
-              </div>
-
-              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="font-bold text-slate-300 mb-2 flex items-center gap-2"><div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center text-xs">2</div> Guarda tu Ticket</div>
-                <button onClick={() => generateTicketImage(items, orderInfo, total, deliveryCost)} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-500 flex items-center justify-center gap-2">
+                <div className="font-bold text-slate-300 mb-2 flex items-center gap-2"><div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center text-xs">1</div> Descarga tu Ticket</div>
+                <button onClick={() => generateTicketImage(items, orderInfo, total)} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-500 flex items-center justify-center gap-2">
                   <Icons.Download className="w-5 h-5" /> Descargar Ticket (PNG)
                 </button>
                 <div className="mt-4 text-center">
@@ -983,17 +1067,10 @@
                 </div>
               </div>
 
-              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="font-bold text-slate-300 mb-2 flex items-center gap-2"><div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center text-xs">3</div> Envía Comprobante</div>
-                <a href="https://wa.me/+528111200176" target="_blank" className="w-full bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-400 flex items-center justify-center gap-2"><Icons.Whatsapp className="w-5 h-5" /> Abrir WhatsApp</a>
-              </div>
-
               <div className="flex gap-2">
-                {orderInfo.method !== 'delivery' && (
-                  <a href="https://maps.app.goo.gl/BWJjWYbNft93Ei4s8" target="_blank" className="flex-1 bg-slate-700 text-slate-300 font-bold py-3 rounded-lg hover:bg-slate-600 flex items-center justify-center gap-2">
-                    <Icons.Location className="w-4 h-4" /> Ver Ubicación
-                  </a>
-                )}
+                <a href="https://maps.app.goo.gl/BWJjWYbNft93Ei4s8" target="_blank" className="flex-1 bg-slate-700 text-slate-300 font-bold py-3 rounded-lg hover:bg-slate-600 flex items-center justify-center gap-2">
+                  <Icons.Location className="w-4 h-4" /> Ver Ubicación
+                </a>
                 <button onClick={onClose} className="flex-1 bg-slate-700 text-emerald-400 font-bold py-3 rounded-lg hover:bg-slate-600 border border-emerald-500/30">Listo / Inicio</button>
               </div>
 
