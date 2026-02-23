@@ -203,200 +203,152 @@
 
     const DATA_CATEGORIES = [
       { id: 1, name: 'FRESAS CON CREMA' },
-      { id: 2, name: 'BEBIDAS' },
-      { id: 3, name: 'COMIDAS' }
+      { id: 4, name: 'BEBIDAS' },
+      { id: 5, name: 'COMIDAS' }
     ];
 
-    // UPDATED PRODUCT DATA (Prices $0 for extras)
     const DATA_PRODUCTS = [
-      // ===== FRESAS CON CREMA (MANTENIDA) =====
+      // ===== FRESAS CON CREMA =====
       {
-        "id": 1, "name": "CHICAS", "categoryId": 1,
-        "variants": [
-          { "id": "v1", "name": "NORMALES", "price": 65 },
-          { "id": "v2", "name": "GANSITO", "price": 70 },
-          { "id": 1763753527293, "name": "PINGÜINO", "price": 70 },
-          { "id": 1763753538637, "name": "CHOCORROL", "price": 70 },
-          { "id": 1763753549682, "name": "BUBULUBU", "price": 70 },
-          { "id": 1763753557982, "name": "KINDER BUENO", "price": 75 },
-          { "id": 1763753568073, "name": "PALETA PAYASO", "price": 75 },
-          { "id": 1763753590412, "name": "TROCITOS DE PAY", "price": 90 },
-          { "id": 1763753609033, "name": "FERRERO ROCHER", "price": 110 }
-        ],
+        "id": 1, "name": "PERSONALIZA TUS FRESAS", "categoryId": 1,
         "elements": [
-          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Nutella", "price": 0 }, { "id": "b2", "name": "Chantilly", "price": 0 }, { "id": "b3", "name": "Plts de chocolate", "price": 0 }] },
-          { "id": "toppings", "name": "Toppings", "type": "topping", "max": 1, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas de chocolate", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
-          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella Liquida", "price": 0 }] }
-        ]
-      },
-      {
-        "id": 2, "name": "MEDIANAS", "categoryId": 1,
-        "variants": [
-          { "id": "vm1", "name": "NORMALES", "price": 85 },
-          { "id": "vm2", "name": "GANSITO", "price": 90 },
-          { "id": "vm3", "name": "PINGÜINO", "price": 90 },
-          { "id": "vm4", "name": "CHOCORROL", "price": 90 },
-          { "id": "vm5", "name": "BUBULUBU", "price": 90 },
-          { "id": "vm6", "name": "KINDER BUENO", "price": 95 },
-          { "id": "vm7", "name": "PALETA PAYASO", "price": 95 },
-          { "id": "vm8", "name": "TROCITOS DE PAY", "price": 100 },
-          { "id": "vm9", "name": "FERRERO ROCHER", "price": 135 }
-        ],
-        "elements": [
+          { "id": "size", "name": "Tamaño", "type": "radio", "items": [{ "id": "s1", "name": "CHICA", "price": 60 }, { "id": "s2", "name": "MEDIANA", "price": 80 }, { "id": "s3", "name": "GRANDE", "price": 110 }] },
+          {
+            "id": "variant", "name": "Tipo de Fresa", "type": "radio", "items": [
+              { "id": "v1", "name": "NORMALES", "price": 0 },
+              { "id": "v2", "name": "GANSITO", "price": 10 },
+              { "id": "v3", "name": "PINGÜINO", "price": 10 },
+              { "id": "v4", "name": "CHOCORROL", "price": 10 },
+              { "id": "v5", "name": "BUBULUBU", "price": 10 },
+              { "id": "v6", "name": "KINDER BUENO", "price": 15 },
+              { "id": "v7", "name": "PALETA PAYASO", "price": 15 },
+              { "id": "v8", "name": "TROCITOS DE PAY", "price": 20 },
+              { "id": "v9", "name": "FERRERO ROCHER", "price": 50 }
+            ]
+          },
           { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Nutella", "price": 0 }, { "id": "b2", "name": "Chantilly", "price": 0 }, { "id": "b3", "name": "Plts de chocolate", "price": 0 }] },
           { "id": "toppings", "name": "Toppings", "type": "topping", "max": 2, "allowRepeat": true, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
           { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella Liq", "price": 0 }] }
         ]
       },
+
+      // ===== FRAPPES DE AGUA (Bajo Bebidas ID 4) =====
       {
-        "id": 3, "name": "GRANDES", "categoryId": 1,
+        "id": 4, "name": "FRAAPEE DE AGUA", "categoryId": 4,
         "variants": [
-          { "id": "vg1", "name": "NORMALES", "price": 115 },
-          { "id": "vg2", "name": "GANSITO", "price": 120 },
-          { "id": "vg3", "name": "PINGÜINO", "price": 120 },
-          { "id": "vg4", "name": "CHOCORROL", "price": 120 },
-          { "id": "vg5", "name": "BUBULUBU", "price": 120 },
-          { "id": "vg6", "name": "KINDER BUENO", "price": 125 },
-          { "id": "vg7", "name": "PALETA PAYASO", "price": 125 },
-          { "id": "vg8", "name": "TROCITOS DE PAY", "price": 130 },
-          { "id": "vg9", "name": "FERRERO ROCHER", "price": 165 }
+          { "id": "fa1", "name": "ICE CEREZA", "price": 80 },
+          { "id": "fa2", "name": "ICE MORA", "price": 80 },
+          { "id": "fa3", "name": "PIÑA COLADA", "price": 80 },
+          { "id": "fa4", "name": "CHAMOYADA DE PIÑA", "price": 80 },
+          { "id": "fa5", "name": "MANGO", "price": 80 },
+          { "id": "fa6", "name": "PEPINO", "price": 80 }
+        ],
+        "elements": []
+      },
+
+      // ===== FRAPPES DE LECHE (Bajo Bebidas ID 4) =====
+      {
+        "id": 5, "name": "FRAPPE DE LECHE", "categoryId": 4,
+        "variants": [
+          { "id": "fl1", "name": "MANGO LECCHE", "price": 80 },
+          { "id": "fl2", "name": "MAZAPAN", "price": 80 },
+          { "id": "fl3", "name": "FRESAS CON CREMA", "price": 80 },
+          { "id": "fl4", "name": "GANSITO", "price": 80 },
+          { "id": "fl5", "name": "PINGUINO", "price": 80 },
+          { "id": "fl6", "name": "CHOCO ROL", "price": 80 },
+          { "id": "fl7", "name": "OREO", "price": 80 },
+          { "id": "fl8", "name": "KINDER DELICE", "price": 80 },
+          { "id": "fl9", "name": "FERRERO ROCHER", "price": 80 },
+          { "id": "fl10", "name": "NUTELLA", "price": 80 },
+          { "id": "fl11", "name": "FRUTOS ROJOS", "price": 80 }
         ],
         "elements": [
-          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Nutella", "price": 0 }, { "id": "b2", "name": "Chantilly", "price": 0 }, { "id": "b3", "name": "Plts de chocolate", "price": 0 }] },
-          { "id": "toppings", "name": "Toppings", "type": "topping", "max": 3, "allowRepeat": true, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
-          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella Liq", "price": 0 }] }
+          { "id": "leche", "name": "Tipo de Leche", "type": "radio", "max": 1, "items": [{ "id": "l1", "name": "Entera", "price": 0 }, { "id": "l2", "name": "Deslactosada", "price": 0 }] }
         ]
       },
 
       // ===== BEBIDAS =====
-      // FRAPPES
       {
-        "id": 4, "name": "FRAPPES", "categoryId": 2,
-        "variants": [
-          { "id": "f1", "name": "ICE CEREZA", "price": 70 },
-          { "id": "f2", "name": "ICE MORA AZUL", "price": 70 },
-          { "id": "f3", "name": "PIÑA COLADA", "price": 70 },
-          { "id": "f4", "name": "CHAMOYADA DE PIÑA", "price": 70 },
-          { "id": "f5", "name": "MANGO", "price": 70 },
-          { "id": "f6", "name": "MANGO LECCHE", "price": 80 },
-          { "id": "f7", "name": "MAZAPAN", "price": 80 },
-          { "id": "f8", "name": "PEPINO", "price": 70 },
-          { "id": "f9", "name": "FRESAS CON CREMA", "price": 80 },
-          { "id": "f10", "name": "GANSITO", "price": 80 },
-          { "id": "f11", "name": "PINGUINO", "price": 80 },
-          { "id": "f12", "name": "CHOCO ROL", "price": 80 },
-          { "id": "f13", "name": "OREO", "price": 80 },
-          { "id": "f14", "name": "KINDER DELICE", "price": 80 },
-          { "id": "f15", "name": "FERRERO ROCHER", "price": 80 },
-          { "id": "f16", "name": "NUTELLA", "price": 80 },
-          { "id": "f17", "name": "FRUTOS ROJOS", "price": 80 }
-        ],
-        "elements": []
-      },
-      // LICUADOS
-      {
-        "id": 5, "name": "LICUADOS", "categoryId": 2,
+        "id": 6, "name": "LICUADOS", "categoryId": 4,
         "variants": [
           { "id": "l1", "name": "FRESA", "price": 80 },
           { "id": "l2", "name": "PLATANO", "price": 80 },
           { "id": "l3", "name": "CHOCOLATE", "price": 80 }
         ],
-        "elements": []
+        "elements": [
+          { "id": "leche", "name": "Tipo de Leche", "type": "radio", "max": 1, "items": [{ "id": "l1", "name": "Entera", "price": 0 }, { "id": "l2", "name": "Deslactosada", "price": 0 }] }
+        ]
       },
 
       // ===== COMIDAS =====
-      // CREPA DULCE
       {
-        "id": 6, "name": "CREPA DULCE", "categoryId": 3,
+        "id": 7, "name": "CREPAS DULCES", "categoryId": 5,
         "variants": [
           { "id": "cd1", "name": "NUTELLA", "price": 70 },
           { "id": "cd2", "name": "QUESO CREMA", "price": 70 }
         ],
         "elements": [
           { "id": "fruta", "name": "FRUTA", "type": "fruta", "max": 2, "items": [{ "id": "fr1", "name": "Fresa", "price": 0 }, { "id": "fr2", "name": "Platano", "price": 0 }] },
-          { "id": "toppings", "name": "TOPPING", "type": "topping", "max": 2, "allowRepeat": true, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
-          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella", "price": 0 }] },
-          { "id": "base", "name": "Base", "type": "base", "max": 1, "items": [{ "id": "b1", "name": "Chantilly", "price": 0 }] }
-        ]
-      },
-      // CREPA SALADA
-      {
-        "id": 7, "name": "CREPA SALADA", "categoryId": 3,
-        "variants": [
-          { "id": "cs1", "name": "JAMON Y QUESO MOZARELLA", "price": 70 },
-          { "id": "cs2", "name": "JAMON Y QUESO CREMA", "price": 70 }
-        ],
-        "elements": []
-      },
-      // REBANADA TORTUGA
-      {
-        "id": 8, "name": "REBANADA", "categoryId": 3,
-        "variants": [
-          { "id": "r1", "name": "TORTUGA", "price": 65 }
-        ],
-        "elements": [
-          { "id": "toppings", "name": "TOPPING", "type": "topping", "max": 2, "allowRepeat": true, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
+          { "id": "toppings", "name": "TOPPING", "type": "topping", "max": 1, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
           { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella", "price": 0 }] }
         ]
       },
-      // BANDERILLA NORMAL
       {
-        "id": 9, "name": "BANDERILLA NORMAL", "categoryId": 3,
+        "id": 15, "name": "CREPAS SALADAS", "categoryId": 5,
         "variants": [
-          { "id": "bn1", "name": "CLASICA DE PAVO", "price": 60 },
-          { "id": "bn2", "name": "CHEETOS FLAMING HOT DE PAVO", "price": 75 },
-          { "id": "bn3", "name": "PAPA FRITA DE PAVO", "price": 75 },
-          { "id": "bn4", "name": "CHEETOS QUESO DE PAVO", "price": 75 },
-          { "id": "bn5", "name": "TAKIS FUEGO DE PAVO", "price": 75 },
-          { "id": "bn6", "name": "JALAPEÑO DE PAVO", "price": 75 },
-          { "id": "bn7", "name": "BONELESS DE PAVO", "price": 85 },
-          { "id": "bn8", "name": "CLASICA DE RES", "price": 70 },
-          { "id": "bn9", "name": "CHEETOS FLAMING HOT DE RES", "price": 85 },
-          { "id": "bn10", "name": "PAPA FRITA DE RES", "price": 85 },
-          { "id": "bn11", "name": "CHEETOS QUESO DE RES", "price": 85 },
-          { "id": "bn12", "name": "TAKIS FUEGO DE RES", "price": 85 },
-          { "id": "bn13", "name": "JALAPEÑO DE RES", "price": 85 },
-          { "id": "bn14", "name": "BONELESS DE RES", "price": 85 }
+          { "id": "cs1", "name": "JAMON Y QUESO CREMA", "price": 70 },
+          { "id": "cs2", "name": "JAMON Y QUESO MOZZARELLA", "price": 70 }
         ],
+        "elements": []
+      },
+      {
+        "id": 8, "name": "PASTEL TORTUGA", "categoryId": 5,
+        "variants": [{ "id": "r1", "name": "REBANADA", "price": 60 }],
         "elements": [
-          { "id": "aderezos", "name": "Aderezos", "type": "aderezo", "max": 3, "allowRepeat": true, "items": [{ "id": "a1", "name": "Mayonesa", "price": 0 }, { "id": "a2", "name": "Catsup", "price": 0 }, { "id": "a3", "name": "Mostaza", "price": 0 }] },
-          { "id": "salsas", "name": "Salsas", "type": "salsa", "max": 3, "allowRepeat": true, "items": [{ "id": "s1", "name": "BBQ", "price": 0 }, { "id": "s2", "name": "Tocino", "price": 0 }, { "id": "s3", "name": "Chipotle", "price": 0 }, { "id": "s4", "name": "Picante", "price": 0 }, { "id": "s5", "name": "Wichol", "price": 0 }, { "id": "s6", "name": "Botanera", "price": 0 }, { "id": "s7", "name": "Queso", "price": 0 }] }
+          { "id": "toppings", "name": "TOPPING", "type": "topping", "max": 1, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
+          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella", "price": 0 }] }
         ]
       },
-      // BANDERILLA CON QUESO
       {
-        "id": 10, "name": "BANDERILLA CON QUESO", "categoryId": 3,
-        "variants": [
-          { "id": "bq1", "name": "CLASICA DE PAVO", "price": 70 },
-          { "id": "bq2", "name": "CHEETOS FLAMING HOT DE PAVO", "price": 85 },
-          { "id": "bq3", "name": "PAPA FRITA DE PAVO", "price": 85 },
-          { "id": "bq4", "name": "CHEETOS QUESO DE PAVO", "price": 85 },
-          { "id": "bq5", "name": "TAKIS FUEGO DE PAVO", "price": 85 },
-          { "id": "bq6", "name": "JALAPEÑO DE PAVO", "price": 85 },
-          { "id": "bq7", "name": "BONELESS DE PAVO", "price": 95 },
-          { "id": "bq8", "name": "CLASICA DE RES", "price": 80 },
-          { "id": "bq9", "name": "CHEETOS FLAMING HOT DE RES", "price": 95 },
-          { "id": "bq10", "name": "PAPA FRITA DE RES", "price": 95 },
-          { "id": "bq11", "name": "CHEETOS QUESO DE RES", "price": 95 },
-          { "id": "bq12", "name": "TAKIS FUEGO DE RES", "price": 95 },
-          { "id": "bq13", "name": "JALAPEÑO DE RES", "price": 95 },
-          { "id": "bq14", "name": "BONELESS DE RES", "price": 95 }
-        ],
+        "id": 9, "name": "BANDERILLA COREANA", "categoryId": 5,
         "elements": [
-          { "id": "aderezos", "name": "Aderezos", "type": "aderezo", "max": 3, "allowRepeat": true, "items": [{ "id": "a1", "name": "Mayonesa", "price": 0 }, { "id": "a2", "name": "Catsup", "price": 0 }, { "id": "a3", "name": "Mostaza", "price": 0 }] },
-          { "id": "salsas", "name": "Salsas", "type": "salsa", "max": 3, "allowRepeat": true, "items": [{ "id": "s1", "name": "BBQ", "price": 0 }, { "id": "s2", "name": "Tocino", "price": 0 }, { "id": "s3", "name": "Chipotle", "price": 0 }, { "id": "s4", "name": "Picante", "price": 0 }, { "id": "s5", "name": "Wichol", "price": 0 }, { "id": "s6", "name": "Botanera", "price": 0 }, { "id": "s7", "name": "Queso", "price": 0 }] }
+          {
+            "id": "salchicha", "name": "Tipo de Salchicha", "type": "radio", "items": [
+              { "id": "s1", "name": "PAVO", "price": 60 },
+              { "id": "s2", "name": "RES", "price": 70 },
+              { "id": "s3", "name": "PAVO Y QUESO", "price": 70 },
+              { "id": "s4", "name": "RES Y QUESO", "price": 80 },
+              { "id": "s5", "name": "SOLO QUESO", "price": 95 }
+            ]
+          },
+          {
+            "id": "empanizado", "name": "Tipo de Empanizado", "type": "radio", "items": [
+              { "id": "e1", "name": "CLASICO", "price": 0 },
+              { "id": "e2", "name": "CHEETOS FLAMING HOT", "price": 15 },
+              { "id": "e3", "name": "PAPA FRITA", "price": 15 },
+              { "id": "e4", "name": "CHEETOS QUESO", "price": 15 },
+              { "id": "e5", "name": "TAKIS FUEGO", "price": 15 },
+              { "id": "e6", "name": "JALAPEÑO", "price": 15 },
+              { "id": "e7", "name": "BONELESS", "price": 25 }
+            ]
+          },
+          {
+            "id": "base", "name": "Base", "type": "radio", "items": [
+              { "id": "b0", "name": "NINGUNA", "price": 0 },
+              { "id": "b1", "name": "BAÑADA EN QUESO AMARILLO", "price": 0 }
+            ]
+          }
         ]
       },
-      // TOSTITOS
       {
-        "id": 11, "name": "TOSTITOS", "categoryId": 3,
+        "id": 11, "name": "TOSTITOS", "categoryId": 5,
         "variants": [
           { "id": "to1", "name": "VERDES", "price": 80 },
           { "id": "to2", "name": "MORADOS", "price": 80 }
         ],
         "elements": [
           { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Elote", "price": 0 }, { "id": "b2", "name": "Crema", "price": 0 }, { "id": "b3", "name": "Queso amarillo", "price": 0 }] },
-          { "id": "salsas", "name": "Salsas", "type": "salsa", "max": 3, "allowRepeat": true, "items": [{ "id": "s1", "name": "BBQ", "price": 0 }, { "id": "s2", "name": "Tocino", "price": 0 }, { "id": "s3", "name": "Chipotle", "price": 0 }, { "id": "s4", "name": "Picante", "price": 0 }, { "id": "s5", "name": "Wichol", "price": 0 }, { "id": "s6", "name": "Botanera", "price": 0 }, { "id": "s7", "name": "Queso", "price": 0 }] }
+          { "id": "presentacion", "name": "Presentación", "type": "radio", "items": [{ "id": "p1", "name": "PARADOS", "price": 0 }, { "id": "p2", "name": "ACOSTADO", "price": 0 }] }
         ]
       }
     ];
@@ -640,7 +592,7 @@
     // --- APP COMPONENT ---
     function App() {
       const [cart, setCart] = useState([]);
-      const [currentCategory, setCurrentCategory] = useState(DATA_CATEGORIES[0].id);
+      const [currentCategory, setCurrentCategory] = useState(null);
 
       // Check if virtual store is open on initial load
       const [isStoreOpen, setIsStoreOpen] = useState(isVirtualStoreOpen());
@@ -679,7 +631,8 @@
       const addToCart = (item, quantity) => {
         const items = Array(quantity).fill(item);
         setCart([...cart, ...items]);
-        closeModal();
+        // Instead of closeModal, open the "post-add" modal
+        openModal('post_add_feedback');
       };
 
       const updateCartItem = (index, newItem) => {
@@ -720,7 +673,7 @@
 
           {/* HEADER */}
           <div className="fixed top-0 left-0 right-0 h-16 bg-slate-800/90 backdrop-blur-md z-40 px-4 flex items-center justify-between border-b border-slate-700 shadow-lg">
-            <h1 className="font-bold text-xl tracking-wider text-pink-500">MENÚ VIRTUAL</h1>
+            <h1 className="font-bold text-xl tracking-wider text-pink-500 cursor-pointer" onClick={() => setCurrentCategory(null)}>MENÚ VIRTUAL</h1>
             <button onClick={() => openModal('cart')} className="bg-pink-600 px-4 py-2 rounded-full font-bold flex items-center gap-2 active:scale-95 transition-all shadow-lg shadow-pink-900/50">
               <Icons.Cart className="w-5 h-5" /> <span>{cart.length}</span>
             </button>
@@ -728,30 +681,48 @@
 
           {/* CONTENT */}
           <div className="pt-20 px-4 max-w-2xl mx-auto">
-            <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-2">
-              {DATA_CATEGORIES.map(cat => (
-                <button key={cat.id} onClick={() => setCurrentCategory(cat.id)}
-                  className={`px-5 py-2.5 rounded-xl font-bold whitespace-nowrap transition-all uppercase tracking-wide
-                     ${currentCategory === cat.id ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg scale-105' : 'bg-slate-800 text-slate-400 border border-slate-700'}`}>
-                  {cat.name}
-                </button>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              {DATA_PRODUCTS.filter(p => p.categoryId === currentCategory).map(p => (
-                <div key={p.id} onClick={() => openModal('product_config', { product: p })}
-                  className="bg-slate-800 rounded-2xl p-4 border border-slate-700 active:bg-slate-700/80 transition-all cursor-pointer shadow-md flex justify-between items-center group relative overflow-hidden">
-                  <div>
-                    <h3 className="font-bold text-xl mb-1 group-hover:text-pink-400 transition-colors uppercase">{p.name}</h3>
-                    <p className="text-slate-400 text-sm">{p.variants.length} Variantes</p>
-                  </div>
-                  <button className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-pink-500 group-hover:scale-110 transition-all border border-slate-600">
-                    <span className="text-2xl font-light pb-1">+</span>
-                  </button>
+            {!currentCategory ? (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom duration-500">
+                <div className="text-center py-8">
+                  <h2 className="text-3xl font-black mb-2">¡Bienvenido!</h2>
+                  <p className="text-slate-400">Selecciona una categoría para empezar tu pedido:</p>
                 </div>
-              ))}
-            </div>
+                <div className="grid grid-cols-1 gap-4">
+                  {DATA_CATEGORIES.map(cat => (
+                    <button key={cat.id} onClick={() => setCurrentCategory(cat.id)}
+                      className="bg-slate-800 p-8 rounded-3xl border border-slate-700 hover:border-pink-500 transition-all group relative overflow-hidden active:scale-95">
+                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <span className="text-6xl">{cat.name === 'FRESAS CON CREMA' ? '🍓' : cat.name === 'BEBIDAS' ? '🥤' : '🍔'}</span>
+                      </div>
+                      <span className="text-2xl font-black tracking-widest uppercase relative z-10 group-hover:text-pink-400">{cat.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="animate-in fade-in duration-300">
+                <div className="flex items-center gap-4 mb-6">
+                  <button onClick={() => setCurrentCategory(null)} className="p-2 bg-slate-800 rounded-full text-slate-400 hover:text-white"><Icons.Back /></button>
+                  <h2 className="text-xl font-bold uppercase tracking-widest text-pink-500">{DATA_CATEGORIES.find(c => c.id === currentCategory).name}</h2>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <p className="text-slate-400 text-sm mb-2">Selecciona qué deseas ordenar:</p>
+                  {DATA_PRODUCTS.filter(p => p.categoryId === currentCategory).map(p => (
+                    <div key={p.id} onClick={() => openModal('product_config', { product: p })}
+                      className="bg-slate-800 rounded-2xl p-4 border border-slate-700 active:bg-slate-700/80 transition-all cursor-pointer shadow-md flex justify-between items-center group relative overflow-hidden">
+                      <div>
+                        <h3 className="font-bold text-xl mb-1 group-hover:text-pink-400 transition-colors uppercase">{p.name}</h3>
+                        <p className="text-slate-400 text-sm">{(p.variants || []).length} Opciones</p>
+                      </div>
+                      <button className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-pink-500 group-hover:scale-110 transition-all border border-slate-600">
+                        <span className="text-2xl font-light pb-1">+</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-3">
               <a href="https://maps.app.goo.gl/BWJjWYbNft93Ei4s8" target="_blank" className="flex items-center gap-2 bg-slate-800 border border-slate-600 px-6 py-3 rounded-full shadow-xl active:scale-95 transition-all text-slate-300 font-bold hover:text-white hover:border-slate-500">
@@ -856,6 +827,32 @@
             />
           )}
 
+          {modalState.type === 'post_add_feedback' && (
+            <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur flex items-center justify-center p-6 animate-in fade-in zoom-in duration-200">
+              <div className="w-full max-w-sm bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-2xl">
+                <div className="p-8 text-center space-y-6">
+                  <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto">
+                    <Icons.Check className="w-10 h-10 text-emerald-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-white mb-2">¡Agregado con éxito!</h3>
+                    <p className="text-slate-400">¿Qué te gustaría hacer ahora?</p>
+                  </div>
+                  <div className="space-y-3">
+                    <button onClick={() => { setCurrentCategory(null); closeModal(); }}
+                      className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2">
+                      <span className="text-xl">+</span> Ordenar algo más
+                    </button>
+                    <button onClick={() => openModal('cart')}
+                      className="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-pink-900/40 transition-all active:scale-95 flex items-center justify-center gap-2">
+                      <Icons.Cart className="w-5 h-5" /> Ver mi Pedido
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       );
     }
@@ -863,45 +860,41 @@
     // --- SUBCOMPONENTS (REFINED) ---
 
     function ProductConfigModal({ product, categoryName, initialValues, editIndex, onClose, onConfirm }) {
-      const [variant, setVariant] = useState(initialValues ? product.variants.find(v => v.id === initialValues.variantId) : product.variants[0]);
+      const [variant, setVariant] = useState(initialValues ? (product.variants?.find(v => v.id === initialValues.variantId) || null) : (product.variants?.length === 1 ? product.variants[0] : null));
       const [selections, setSelections] = useState(initialValues ? initialValues.selections : {});
       const [qty, setQty] = useState(1);
 
-      // Reset selections if variant changes? No, keep them usually.
+      // Wizard logic: step -1 = variant selection, step 0...N = element groups
+      const [step, setStep] = useState((variant || !product.variants || product.variants.length === 0) ? 0 : -1);
 
-      const toggleItem = (elementId, item, maxQty, allowRepeat) => {
+      const elements = product.elements || [];
+      const currentElement = elements[step];
+
+      const toggleItem = (elementId, item, maxQty, allowRepeat, type) => {
+        if (type === 'radio') {
+          setSelections({ ...selections, [elementId]: [item] });
+          handleNext();
+          return;
+        }
+
         const current = selections[elementId] || [];
-
-        // Count total occurrences (including repeats)
         const totalSelected = current.length;
-
-        // Check if item already exists
         const countOfItem = current.filter(i => i.id === item.id).length;
 
         if (allowRepeat) {
-          // If we have room
           if (totalSelected < maxQty) {
             setSelections({ ...selections, [elementId]: [...current, item] });
-          } else {
-            // Maybe remove one instance of this item if clicked again? Or just prevent? 
-            // Simplest UX: click adds one until max. If max reached, clicking existing one removes it.
-            if (countOfItem > 0) {
-              // Remove one instance
-              const idx = current.findIndex(i => i.id === item.id);
-              const newArr = [...current];
-              newArr.splice(idx, 1);
-              setSelections({ ...selections, [elementId]: newArr });
-            }
+          } else if (countOfItem > 0) {
+            const idx = current.findIndex(i => i.id === item.id);
+            const newArr = [...current];
+            newArr.splice(idx, 1);
+            setSelections({ ...selections, [elementId]: newArr });
           }
         } else {
-          // Normal toggle
           if (countOfItem > 0) {
             setSelections({ ...selections, [elementId]: current.filter(i => i.id !== item.id) });
           } else {
             if (totalSelected < maxQty) {
-              // If max is 1 (like jars), replace. If max > 1 (bases), add.
-              // Logic says: max 1 per type for Bases. max 1 total Jarabes.
-              // If it's a jarabe (max 1), replace it.
               if (maxQty === 1 && totalSelected === 1) {
                 setSelections({ ...selections, [elementId]: [item] });
               } else {
@@ -912,84 +905,199 @@
         }
       };
 
+      const setNone = (elementId) => {
+        setSelections({ ...selections, [elementId]: [] });
+        handleNext();
+      };
+
+      const handleNext = () => {
+        if (step < elements.length - 1) {
+          setStep(step + 1);
+        } else {
+          setStep(999);
+        }
+      };
+
+      const handleBack = () => {
+        if (step > 0) {
+          setStep(step - 1);
+        } else if (step === 0 && (product.variants || []).length > 1) {
+          setStep(-1);
+        } else {
+          onClose();
+        }
+      };
+
+      const selectVariant = (v) => {
+        setVariant(v);
+        if (elements.length > 0) {
+          setStep(0);
+        } else {
+          setStep(999);
+        }
+      };
+
       const calculateTotal = () => {
-        let t = variant.price;
-        // Extras cost $0 in this new logic but let's keep it robust
-        Object.values(selections).flat().forEach(i => t += i.price);
+        let t = 0;
+        if (variant) t += variant.price;
+        // Add prices from all selections (including radio buttons in elements)
+        Object.values(selections).flat().forEach(i => t += (i.price || 0));
         return t;
       };
 
       const handleConfirm = () => {
-        // Optional: Validate Requirements (e.g. at least 1 base)
         const itemData = {
           productId: product.id, productName: product.name, categoryName,
-          variantId: variant.id, variantName: variant.name,
+          variantId: variant ? variant.id : null, variantName: variant ? variant.name : null,
           selections, elementConfig: product.elements, totalPrice: calculateTotal()
         };
         onConfirm(itemData, qty);
       };
 
+      const isFinished = step === 999;
+      // Dynamic questions based on product and step
+      let stepTitle = `Selecciona ${currentElement?.name}`;
+      if (product.id === 1) { // Fresas con Crema
+        if (currentElement?.id === 'size') stepTitle = 'Selecciona el tamaño';
+        if (currentElement?.id === 'variant') stepTitle = 'Selecciona el tipo de fresas';
+      }
+      if (product.id === 6 || product.id === 5) { // Licuados / Frappes Leche
+        if (currentElement?.id === 'leche') stepTitle = 'Selecciona el tipo de leche';
+      }
+
       return (
         <div className="fixed inset-0 z-50 bg-slate-900 flex flex-col animate-in slide-in-from-bottom duration-300">
-          <div className="flex-1 overflow-y-auto">
-            <div className="h-40 bg-gradient-to-b from-slate-700 to-slate-800 flex items-center justify-center relative">
-              <button onClick={onClose} className="absolute top-4 left-4 bg-black/30 p-2 rounded-full text-white backdrop-blur"><Icons.Close /></button>
-              <span className="text-4xl">🍓</span>
+          <div className="h-16 bg-slate-800 flex items-center justify-between px-4 border-b border-slate-700">
+            <button onClick={handleBack} className="text-slate-400 p-2"><Icons.Back /></button>
+            <div className="text-center">
+              <span className="text-xs font-bold text-pink-500 uppercase block leading-tight">{product.name}</span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-widest">{isFinished ? 'Resumen' : (step === -1 ? 'Selecciona' : `Paso ${step + 1} de ${elements.length}`)}</span>
             </div>
-            <div className="p-5 space-y-6">
-              <div><h2 className="text-3xl font-black text-white">{product.name}</h2><p className="text-pink-500 font-bold uppercase text-sm">{categoryName}</p></div>
+            <button onClick={onClose} className="text-slate-400 p-2"><Icons.Close /></button>
+          </div>
 
-              <div>
-                <label className="text-sm font-bold text-slate-500 uppercase mb-2 block">Tamaño</label>
-                <div className="grid grid-cols-2 gap-2">
+          <div className="flex-1 overflow-y-auto p-5 scrollbar-hide">
+            {step === -1 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right duration-300">
+                <div className="text-center">
+                  <h3 className="text-2xl font-black mb-2">Escoge una opción</h3>
+                  <p className="text-slate-400 text-sm">Selecciona para continuar:</p>
+                </div>
+                <div className="grid grid-cols-1 gap-3">
                   {product.variants.map(v => (
-                    <button key={v.id} onClick={() => setVariant(v)}
-                      className={`p-3 rounded-xl border text-left transition-all ${variant.id === v.id ? 'bg-slate-700 border-pink-500 ring-1 ring-pink-500' : 'bg-slate-800 border-slate-700 text-slate-400'}`}>
-                      <div className="font-bold">{v.name}</div><div className="text-sm opacity-80">${v.price}</div>
+                    <button key={v.id} onClick={() => selectVariant(v)}
+                      className="group bg-slate-800 border-2 border-slate-700 p-5 rounded-2xl flex justify-between items-center hover:border-pink-500 transition-all active:scale-95">
+                      <div className="text-left">
+                        <div className="font-bold text-lg group-hover:text-pink-400 transition-colors uppercase">{v.name}</div>
+                        <div className="text-slate-400 text-sm">Listo en unos minutos</div>
+                      </div>
+                      <div className="text-xl font-black text-white">${v.price}</div>
                     </button>
                   ))}
                 </div>
               </div>
+            )}
 
-              {product.elements.map(el => (
-                <div key={el.id}>
-                  <div className="flex justify-between items-baseline mb-2">
-                    <label className="text-sm font-bold text-slate-500 uppercase">{el.name}</label>
-                    <span className="text-xs text-slate-400">
-                      {(selections[el.id] || []).length} / {el.max}
-                      {el.allowRepeat ? ' (Repetibles)' : ''}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2">
-                    {el.items.map(item => {
-                      const count = (selections[el.id] || []).filter(s => s.id === item.id).length;
-                      const isSelected = count > 0;
-                      return (
-                        <button key={item.id} onClick={() => toggleItem(el.id, item, el.max, el.allowRepeat)}
-                          className={`flex justify-between items-center p-3 rounded-lg border transition-all ${isSelected ? 'bg-slate-700 border-purple-500 ring-1 ring-purple-500' : 'bg-slate-800 border-slate-700 text-slate-400'}`}>
-                          <span>{item.name} {count > 1 ? `x${count}` : ''}</span>
-                          <span className="text-xs font-mono">{count > 0 && el.allowRepeat ? '+' : (isSelected ? '✓' : '')}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+            {step >= 0 && step < elements.length && (
+              <div key={step} className="space-y-6 animate-in fade-in slide-in-from-right duration-300">
+                <div className="text-center">
+                  <h3 className="text-2xl font-black mb-1 uppercase tracking-tight">{stepTitle}</h3>
+                  {currentElement.type !== 'radio' && <p className="text-slate-400 text-sm italic">Máximo {currentElement.max} {currentElement.allowRepeat ? '(puede repetirse)' : ''}</p>}
                 </div>
-              ))}
-            </div>
+
+                <div className="grid grid-cols-1 gap-2">
+                  {currentElement.type !== 'radio' && (
+                    <button onClick={() => setNone(currentElement.id)}
+                      className={`flex justify-between items-center p-4 rounded-xl border-2 transition-all ${(!selections[currentElement.id] || selections[currentElement.id].length === 0) ? 'bg-slate-700 border-slate-500' : 'bg-slate-800 border-slate-700 opacity-60'}`}>
+                      <span className="font-bold">NINGUNO / SIN ESTO</span>
+                      <Icons.Close className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  {currentElement.items.map(item => {
+                    const count = (selections[currentElement.id] || []).filter(s => s.id === item.id).length;
+                    const isSelected = count > 0;
+                    return (
+                      <button key={item.id} onClick={() => toggleItem(currentElement.id, item, currentElement.max, currentElement.allowRepeat, currentElement.type)}
+                        className={`flex justify-between items-center p-4 rounded-xl border-2 transition-all active:scale-[0.98] ${isSelected ? 'bg-slate-700 border-pink-500 ring-2 ring-pink-500/20' : 'bg-slate-800 border-slate-700 text-slate-400'}`}>
+                        <div className="text-left">
+                          <span className="font-bold text-white uppercase block">{item.name} {count > 1 ? `x${count}` : ''}</span>
+                          {item.price > 0 && <span className="text-xs text-pink-400">+ ${item.price}</span>}
+                        </div>
+                        {isSelected && <div className="bg-pink-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs animate-in zoom-in duration-200">✓</div>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {isFinished && (
+              <div className="space-y-6 animate-in fade-in zoom-in duration-300">
+                <div className="text-center py-4">
+                  <div className="text-6xl mb-4">😋</div>
+                  <h3 className="text-2xl font-black">¡Todo listo!</h3>
+                  <p className="text-slate-400">Revisa tu personalización:</p>
+                </div>
+
+                <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 divide-y divide-slate-700 space-y-4">
+                  {variant && (
+                    <div className="pt-0 pb-3 flex justify-between">
+                      <span className="text-slate-400">Variante:</span>
+                      <span className="font-bold text-white uppercase text-right">{variant.name}</span>
+                    </div>
+                  )}
+                  {elements.map(el => {
+                    const sels = selections[el.id] || [];
+                    return (
+                      <div key={el.id} className="py-3 flex justify-between gap-4">
+                        <span className="text-slate-400">{el.name}:</span>
+                        <span className="font-medium text-white text-right">{sels.length > 0 ? sels.map(s => s.name).join(', ') : 'Ninguno'}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {!initialValues && (
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-xs font-bold text-slate-500 uppercase">Cantidad</span>
+                    <div className="flex items-center bg-slate-800 rounded-2xl p-2 border border-slate-700 scale-110">
+                      <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-12 h-12 text-slate-400 text-2xl">-</button>
+                      <span className="w-12 text-center font-black text-white text-xl">{qty}</span>
+                      <button onClick={() => setQty(q => q + 1)} className="w-12 h-12 text-white text-2xl">+</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="bg-slate-800 p-4 border-t border-slate-700 flex gap-4 items-center">
-            {!initialValues && (
-              <div className="flex items-center bg-slate-900 rounded-lg p-1 border border-slate-700">
-                <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-10 text-slate-400">-</button>
-                <span className="w-8 text-center font-bold text-white">{qty}</span>
-                <button onClick={() => setQty(q => q + 1)} className="w-10 h-10 text-white">+</button>
-              </div>
-            )}
-            <button onClick={handleConfirm} className="flex-1 bg-pink-600 hover:bg-pink-500 text-white font-bold py-3.5 rounded-xl shadow-lg flex justify-between px-6">
-              <span>{initialValues ? 'Guardar' : 'Agregar'}</span><span>${(calculateTotal() * qty).toFixed(2)}</span>
-            </button>
+            {step >= 0 && step < elements.length ? (
+              currentElement.type === 'radio' ? null : (
+                <button onClick={handleNext}
+                  className="flex-1 bg-white text-slate-900 font-black py-4 rounded-2xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2">
+                  CONTINUAR <Icons.Back className="rotate-180 w-4 h-4" />
+                </button>
+              )
+            ) : isFinished ? (
+              <button onClick={handleConfirm}
+                className="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 animate-pulse-slow text-white font-black py-4 rounded-2xl shadow-xl shadow-pink-900/50 transition-all active:scale-95 flex justify-between px-8">
+                <span>AGREGAR AL CARRITO</span>
+                <span>${(calculateTotal() * qty).toFixed(2)}</span>
+              </button>
+            ) : null}
           </div>
+
+          <style>{`
+            @keyframes pulse-slow {
+              0%, 100% { transform: scale(1); filter: brightness(1); }
+              50% { transform: scale(1.02); filter: brightness(1.1); }
+            }
+            .animate-pulse-slow {
+              animation: pulse-slow 2s infinite ease-in-out;
+            }
+          `}</style>
         </div>
       );
     }
@@ -1056,14 +1164,23 @@
             <h1 className="text-3xl font-black text-center text-white">¡Pedido Generado!</h1>
             <div className="w-full max-w-md space-y-4">
 
-              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div className="font-bold text-slate-300 mb-2 flex items-center gap-2"><div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center text-xs">1</div> Descarga tu Ticket</div>
-                <button onClick={() => generateTicketImage(items, orderInfo, total)} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-500 flex items-center justify-center gap-2">
-                  <Icons.Download className="w-5 h-5" /> Descargar Ticket (PNG)
+              <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+                <div className="font-bold text-slate-300 mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm">1</div>
+                  Descarga tu Ticket
+                </div>
+                <button onClick={() => generateTicketImage(items, orderInfo, total)} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-900/40">
+                  <Icons.Download className="w-6 h-6" /> Descargar Ticket (PNG)
                 </button>
-                <div className="mt-4 text-center">
-                  <div className="text-xs text-slate-500">ORDEN</div>
-                  <div className="font-mono text-xl text-yellow-500 font-bold tracking-widest">#{orderInfo.ticketId}</div>
+                <div className="mt-6 pt-6 border-t border-slate-700/50 text-center space-y-4">
+                  <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-700 text-slate-300 text-sm italic">
+                    <span className="text-xl block mb-2">📋</span>
+                    "Muestra este ticket en ventanilla para que preparen tu pedido."
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Número de Orden</div>
+                    <div className="font-mono text-3xl text-yellow-500 font-bold tracking-[0.2em]">#{orderInfo.ticketId}</div>
+                  </div>
                 </div>
               </div>
 
