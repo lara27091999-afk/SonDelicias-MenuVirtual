@@ -184,22 +184,6 @@
     }
 
     // --- CONSTANTS ---
-    const DELIVERY_COST = 25.00;
-
-    const COLONIAS_APODACA = [
-      "Valle del Salduero",
-      "Ex-Hacienda Santa Rosa",
-      "Villas de Santa Rosa",
-      "Los Murales",
-      "Prados de Santa Rosa",
-      "Paraje Santa Rosa",
-      "Quinta Colonial Apodaca I",
-      "Quinta Colonial Apodaca II",
-      "Quinta Colonial Apodaca III",
-      "Antesalista",
-      "Los Soles",
-      "Arbado Castañares"
-    ];
 
     const DATA_CATEGORIES = [
       { id: 1, name: 'FRESAS CON CREMA' },
@@ -234,7 +218,7 @@
 
       // ===== FRAPPES DE AGUA (Bajo Bebidas ID 4) =====
       {
-        "id": 4, "name": "FRAAPEE DE AGUA", "categoryId": 4,
+        "id": 4, "name": "FRAPPE DE AGUA", "categoryId": 4,
         "variants": [
           { "id": "fa1", "name": "ICE CEREZA", "price": 70 },
           { "id": "fa2", "name": "ICE MORA", "price": 70 },
@@ -251,7 +235,7 @@
       {
         "id": 5, "name": "FRAPPE DE LECHE", "categoryId": 4,
         "variants": [
-          { "id": "fl1", "name": "MANGO LECCHE", "price": 80 },
+          { "id": "fl1", "name": "MANGO LECHE", "price": 80 },
           { "id": "fl2", "name": "MAZAPAN", "price": 80 },
           { "id": "fl3", "name": "FRESAS CON CREMA", "price": 80 },
           { "id": "fl4", "name": "GANSITO", "price": 80 },
@@ -303,44 +287,17 @@
         "elements": []
       },
       {
-        "id": 8, "name": "PASTEL TORTUGA", "categoryId": 5,
-        "variants": [{ "id": "r1", "name": "REBANADA", "price": 60 }],
+        "id": 8, "name": "REBANADA DE PASTEL", "categoryId": 5,
+        "variants": [
+          { "id": "r1", "name": "PASTEL TORTUGA", "price": 65 },
+          { "id": "r2", "name": "PASTEL DE QUESO", "price": 65 }
+        ],
         "elements": [
           { "id": "toppings", "name": "TOPPING", "type": "topping", "max": 1, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
           { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella", "price": 0 }] }
         ]
       },
-      {
-        "id": 9, "name": "BANDERILLA COREANA", "categoryId": 5,
-        "elements": [
-          {
-            "id": "salchicha", "name": "Tipo de Salchicha", "type": "radio", "items": [
-              { "id": "s1", "name": "PAVO", "price": 65 },
-              { "id": "s2", "name": "RES", "price": 70 },
-              { "id": "s3", "name": "PAVO Y QUESO", "price": 70 },
-              { "id": "s4", "name": "RES Y QUESO", "price": 80 },
-              { "id": "s5", "name": "SOLO QUESO", "price": 95 }
-            ]
-          },
-          {
-            "id": "empanizado", "name": "Tipo de Empanizado", "type": "radio", "items": [
-              { "id": "e1", "name": "CLASICO", "price": 0 },
-              { "id": "e2", "name": "CHEETOS FLAMING HOT", "price": 15 },
-              { "id": "e3", "name": "PAPA FRITA", "price": 15 },
-              { "id": "e4", "name": "CHEETOS QUESO", "price": 15 },
-              { "id": "e5", "name": "TAKIS FUEGO", "price": 15 },
-              { "id": "e6", "name": "JALAPEÑO", "price": 15 },
-              { "id": "e7", "name": "BONELESS", "price": 25 }
-            ]
-          },
-          {
-            "id": "base", "name": "Base", "type": "radio", "items": [
-              { "id": "b0", "name": "NINGUNA", "price": 0 },
-              { "id": "b1", "name": "BAÑADA EN QUESO AMARILLO", "price": 0 }
-            ]
-          }
-        ]
-      },
+
       {
         "id": 11, "name": "TOSTITOS", "categoryId": 5,
         "variants": [
@@ -348,7 +305,7 @@
           { "id": "to2", "name": "MORADOS", "price": 80 }
         ],
         "elements": [
-          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Elote", "price": 0 }, { "id": "b2", "name": "Crema", "price": 0 }, { "id": "b3", "name": "Queso amarillo", "price": 0 }] },
+          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Elote", "price": 0 }, { "id": "b2", "name": "Crema", "price": 0 }, { "id": "b3", "name": "Queso amarillo", "price": 0 }, { "id": "b4", "name": "Salsa roja casera", "price": 0 }] },
           { "id": "presentacion", "name": "Presentación", "type": "radio", "items": [{ "id": "p1", "name": "PARADOS", "price": 0 }, { "id": "p2", "name": "ACOSTADO", "price": 0 }] }
         ]
       }
@@ -493,7 +450,7 @@
       // Fix background since helper expects context
       renderTicket(ctx, false);
 
-      downloadCanvas(canvas, `Ticket_${orderInfo.ticketId}.png`);
+      return canvas.toDataURL('image/png');
     };
 
     const generatePaymentImage = (ticketId, total) => {
@@ -690,7 +647,15 @@
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                   {DATA_CATEGORIES.map(cat => (
-                    <button key={cat.id} onClick={() => setCurrentCategory(cat.id)}
+                    <button key={cat.id} onClick={() => {
+                      const catProducts = DATA_PRODUCTS.filter(p => p.categoryId === cat.id);
+                      if (catProducts.length === 1) {
+                        setCurrentCategory(cat.id);
+                        openModal('product_config', { product: catProducts[0] });
+                      } else {
+                        setCurrentCategory(cat.id);
+                      }
+                    }}
                       className="bg-slate-800 p-8 rounded-3xl border border-slate-700 hover:border-pink-500 transition-all group relative overflow-hidden active:scale-95">
                       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <span className="text-6xl">{cat.name === 'FRESAS CON CREMA' ? '🍓' : cat.name === 'BEBIDAS' ? '🥤' : '🍔'}</span>
@@ -788,39 +753,6 @@
               )}
             </div>
           )}
-
-          {modalState.type === 'delivery_select' && (
-            <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur flex items-center justify-center p-6 animate-in fade-in zoom-in duration-200">
-              <div className="w-full max-w-sm bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
-                <div className="p-4 border-b border-slate-700 flex justify-between items-center">
-                  <h3 className="font-bold text-lg">¿Cómo deseas tu pedido?</h3>
-                  <button onClick={() => openModal('cart')}><Icons.Close className="w-6 h-6 text-slate-400" /></button>
-                </div>
-                <div className="p-6 flex flex-col gap-4">
-                  <button onClick={() => openModal('pickup_form')} className="bg-slate-700 hover:bg-slate-600 p-6 rounded-xl flex items-center gap-4 group">
-                    <div className="p-3 bg-purple-500/20 rounded-lg text-purple-400"><Icons.Store className="w-8 h-8" /></div>
-                    <div className="text-left"><div className="font-bold text-lg text-white">Recoger en Tienda</div><div className="text-slate-400 text-sm">Sin costo extra</div></div>
-                  </button>
-                  <button onClick={() => openModal('delivery_form')} className="bg-slate-700 hover:bg-slate-600 p-6 rounded-xl flex items-center gap-4 group">
-                    <div className="p-3 bg-blue-500/20 rounded-lg text-blue-400"><Icons.Bike className="w-8 h-8" /></div>
-                    <div className="text-left"><div className="font-bold text-lg text-white">Envío a Domicilio</div><div className="text-blue-300 text-sm font-bold">Costo: ${DELIVERY_COST.toFixed(2)}</div></div>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {modalState.type === 'pickup_form' && <PickupForm onBack={() => openModal('delivery_select')} onSubmit={(info) => {
-            const id = Math.floor(100000 + Math.random() * 900000); // 6 digit ID
-            const finalInfo = { ...info, ticketId: id, method: 'pickup' };
-            setOrderInfo(finalInfo); openModal('ticket_result', { orderInfo: finalInfo });
-          }} />}
-
-          {modalState.type === 'delivery_form' && <DeliveryForm deliveryCost={DELIVERY_COST} onBack={() => openModal('delivery_select')} onSubmit={(info) => {
-            const id = Math.floor(100000 + Math.random() * 900000);
-            const finalInfo = { ...info, ticketId: id, method: 'delivery' };
-            setOrderInfo(finalInfo); openModal('ticket_result', { orderInfo: finalInfo });
-          }} />}
 
           {modalState.type === 'ticket_result' && orderInfo && (
             <TicketResultModal orderInfo={orderInfo} items={cart} total={finalTotal}
@@ -958,12 +890,47 @@
       const isFinished = step === 999;
       // Dynamic questions based on product and step
       let stepTitle = `Selecciona ${currentElement?.name}`;
-      if (product.id === 1) { // Fresas con Crema
-        if (currentElement?.id === 'size') stepTitle = 'Selecciona el tamaño';
-        if (currentElement?.id === 'variant') stepTitle = 'Selecciona el tipo de fresas';
-      }
-      if (product.id === 6 || product.id === 5) { // Licuados / Frappes Leche
-        if (currentElement?.id === 'leche') stepTitle = 'Selecciona el tipo de leche';
+
+      let helperTitle = '¡Hola!';
+      let helperText = 'Elige lo que más te guste.';
+
+      if (step === -1) {
+        helperTitle = '¡Empecemos!';
+        helperText = 'Selecciona la variante que más te guste.';
+      } else if (currentElement) {
+        if (product.id === 1 || product.id === 7 || product.id === 8 || product.id === 11) {
+          // Fresas con Crema, Crepas Dulces, Pastel Tortuga, Tostitos
+          if (currentElement.id === 'size') {
+            helperTitle = '¡Hora de elegir!';
+            helperText = 'Ahora selecciona el tamaño deseado.';
+          } else if (currentElement.id === 'variant' || currentElement.id === 'presentacion') {
+            helperTitle = '¡Dale sabor!';
+            helperText = 'Selecciona la variante que más te guste.';
+          } else if (currentElement.id === 'bases') {
+            helperTitle = 'Base deliciosa';
+            helperText = `Prepárala con las bases disponibles, elige ${currentElement.max} máximo.`;
+          } else if (currentElement.id === 'toppings' || currentElement.id === 'fruta') {
+            helperTitle = '¡Un toque especial!';
+            helperText = `Selecciona ${currentElement.max} máximo${currentElement.allowRepeat ? ', puedes repetir' : ''}.`;
+          } else if (currentElement.id === 'jarabes') {
+            helperTitle = '¡El final perfecto!';
+            helperText = `Selecciona máximo ${currentElement.max} jarabe.`;
+          } else {
+            helperTitle = `¡Elige ${currentElement.name}!`;
+            helperText = currentElement.type !== 'radio' ? `Puedes elegir máximo ${currentElement.max} ${currentElement.allowRepeat ? 'opciones (puedes repetir)' : 'opciones'}.` : 'Selecciona una opción.';
+          }
+        } else if (product.categoryId === 4) { // Bebidas
+          if (currentElement.id === 'leche') {
+            helperTitle = 'Tipo de Leche';
+            helperText = 'Selecciona tu tipo de leche favorita.';
+          } else {
+            helperTitle = `¡Elige ${currentElement.name}!`;
+            helperText = 'Selecciona una opción.';
+          }
+        } else {
+          helperTitle = `¡Elige ${currentElement.name}!`;
+          helperText = currentElement.type !== 'radio' ? `Puedes elegir máximo ${currentElement.max} ${currentElement.allowRepeat ? 'opcionalmente repetidos' : 'opciones'}.` : 'Selecciona una opción.';
+        }
       }
 
       return (
@@ -978,12 +945,20 @@
           </div>
 
           <div className="flex-1 overflow-y-auto p-5 scrollbar-hide">
+
+            {/* INLINE HELPER BANNER */}
+            {!isFinished && (
+              <div className="bg-slate-800 border border-pink-500/30 rounded-2xl p-4 mb-6 flex items-start gap-4 shadow-lg animate-in slide-in-from-top duration-300">
+                <div className="text-4xl animate-bounce">🙋‍♀️</div>
+                <div className="flex-1">
+                  <h4 className="font-black text-pink-400 text-lg leading-tight mb-1">{helperTitle}</h4>
+                  <p className="text-sm text-slate-300 font-medium leading-snug">{helperText}</p>
+                </div>
+              </div>
+            )}
+
             {step === -1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right duration-300">
-                <div className="text-center">
-                  <h3 className="text-2xl font-black mb-2">Escoge una opción</h3>
-                  <p className="text-slate-400 text-sm">Selecciona para continuar:</p>
-                </div>
                 <div className="grid grid-cols-1 gap-3">
                   {product.variants.map(v => (
                     <button key={v.id} onClick={() => selectVariant(v)}
@@ -1000,10 +975,9 @@
             )}
 
             {step >= 0 && step < elements.length && (
-              <div key={step} className="space-y-6 animate-in fade-in slide-in-from-right duration-300">
-                <div className="text-center">
-                  <h3 className="text-2xl font-black mb-1 uppercase tracking-tight">{stepTitle}</h3>
-                  {currentElement.type !== 'radio' && <p className="text-slate-400 text-sm italic">Máximo {currentElement.max} {currentElement.allowRepeat ? '(puede repetirse)' : ''}</p>}
+              <div key={step} className="space-y-4 animate-in fade-in slide-in-from-right duration-300 relative">
+                <div className="text-center mb-2">
+                  <h3 className="text-2xl font-black uppercase tracking-tight text-white/90">{stepTitle}</h3>
                 </div>
 
                 <div className="grid grid-cols-1 gap-2">
@@ -1019,8 +993,8 @@
                     const count = (selections[currentElement.id] || []).filter(s => s.id === item.id).length;
                     const isSelected = count > 0;
 
-                    // Cumulative pricing logic for Fresas (1) and Banderillas (9)
-                    const isCumulativeProduct = product.id === 1 || product.id === 9;
+                    // Cumulative pricing logic for Fresas (1)
+                    const isCumulativeProduct = product.id === 1;
                     const isStep0 = step === 0;
                     const isStep1 = step === 1;
 
@@ -1124,95 +1098,49 @@
       );
     }
 
-    function PickupForm({ onBack, onSubmit }) {
-      const [data, setData] = useState({ name: '', lastname: '', phone: '' });
-      const isValid = data.name && data.lastname && data.phone.length >= 10;
-      return (
-        <div className="fixed inset-0 z-[60] bg-slate-900 flex flex-col animate-in slide-in-from-right duration-200">
-          <div className="p-4 bg-slate-800 border-b border-slate-700 flex items-center gap-3">
-            <button onClick={onBack}><Icons.Back className="w-6 h-6 text-slate-300" /></button><h2 className="font-bold text-lg">Recolectar en Tienda</h2>
-          </div>
-          <div className="flex-1 p-6 space-y-4">
-            <div><label className="block text-sm text-slate-400 mb-1">Nombre</label><input type="text" className="w-full bg-slate-800 border-slate-700 rounded-lg p-3 outline-none focus:border-pink-500 border" value={data.name} onChange={e => setData({ ...data, name: e.target.value })} placeholder="Tu nombre" /></div>
-            <div><label className="block text-sm text-slate-400 mb-1">Apellido</label><input type="text" className="w-full bg-slate-800 border-slate-700 rounded-lg p-3 outline-none focus:border-pink-500 border" value={data.lastname} onChange={e => setData({ ...data, lastname: e.target.value })} placeholder="Tu apellido" /></div>
-            <div><label className="block text-sm text-slate-400 mb-1">Celular (+52)</label><input type="tel" className="w-full bg-slate-800 border-slate-700 rounded-lg p-3 outline-none focus:border-pink-500 border" value={data.phone} onChange={e => setData({ ...data, phone: e.target.value })} placeholder="10 dígitos" /></div>
-          </div>
-          <div className="p-4 bg-slate-800 border-t border-slate-700">
-            <button disabled={!isValid} onClick={() => onSubmit({ ...data, contact: `${data.name} ${data.lastname} (${data.phone})` })} className="w-full bg-emerald-600 disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-lg">GENERAR TICKET</button>
-          </div>
-        </div>
-      )
-    }
-
-    function DeliveryForm({ deliveryCost, onBack, onSubmit }) {
-      const [data, setData] = useState({ name: '', lastname: '', whatsapp: '', colonia: COLONIAS_APODACA[0], street: '', number: '', desc: '' });
-      const isValid = data.name && data.lastname && data.whatsapp && data.street && data.number;
-      return (
-        <div className="fixed inset-0 z-[60] bg-slate-900 flex flex-col animate-in slide-in-from-right duration-200">
-          <div className="p-4 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
-            <div className="flex items-center gap-3"><button onClick={onBack}><Icons.Back className="w-6 h-6 text-slate-300" /></button><h2 className="font-bold text-lg">Envío a Domicilio</h2></div>
-            <div className="text-xs bg-slate-700 px-2 py-1 rounded text-blue-300">Costo: ${deliveryCost}</div>
-          </div>
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            <div className="flex gap-3">
-              <div className="flex-1"><label className="block text-sm text-slate-400 mb-1">Nombre</label><input type="text" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.name} onChange={e => setData({ ...data, name: e.target.value })} /></div>
-              <div className="flex-1"><label className="block text-sm text-slate-400 mb-1">Apellido</label><input type="text" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.lastname} onChange={e => setData({ ...data, lastname: e.target.value })} /></div>
-            </div>
-            <div><label className="block text-sm text-slate-400 mb-1">WhatsApp (+52)</label><input type="tel" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.whatsapp} onChange={e => setData({ ...data, whatsapp: e.target.value })} /></div>
-            <div><label className="block text-sm text-slate-400 mb-1">Colonia (Apodaca)</label>
-              <select className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.colonia} onChange={e => setData({ ...data, colonia: e.target.value })}>
-                {COLONIAS_APODACA.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-            <div className="flex gap-3">
-              <div className="flex-1"><label className="block text-sm text-slate-400 mb-1">Calle</label><input type="text" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.street} onChange={e => setData({ ...data, street: e.target.value })} /></div>
-              <div className="w-24"><label className="block text-sm text-slate-400 mb-1">Número</label><input type="text" className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500" value={data.number} onChange={e => setData({ ...data, number: e.target.value })} /></div>
-            </div>
-            <div><label className="block text-sm text-slate-400 mb-1">Referencias</label><textarea rows="3" maxLength={500} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 outline-none focus:border-blue-500 resize-none" value={data.desc} onChange={e => setData({ ...data, desc: e.target.value })} placeholder="Color, entre calles..."></textarea></div>
-          </div>
-          <div className="p-4 bg-slate-800 border-t border-slate-700 flex gap-3">
-            <button onClick={onBack} className="flex-1 bg-slate-700 py-4 rounded-xl text-slate-300 font-bold">Cancelar</button>
-            <button disabled={!isValid} onClick={() => onSubmit({ ...data, contact: data.whatsapp, address: `${data.street} #${data.number}`, description: data.desc, colonia: data.colonia })} className="flex-[2] bg-emerald-600 disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-lg">GENERAR TICKET</button>
-          </div>
-        </div>
-      )
-    }
-
     function TicketResultModal({ orderInfo, items, total, onClose }) {
-      return (
-        <div className="fixed inset-0 z-[70] bg-slate-900 overflow-y-auto animate-in fade-in duration-500">
-          <div className="min-h-full flex flex-col items-center justify-center p-6 space-y-6">
-            <div className="w-20 h-20 rounded-full bg-emerald-500 flex items-center justify-center shadow-2xl shadow-emerald-500/50 mb-4 animate-bounce"><Icons.Check className="w-10 h-10 text-white" /></div>
-            <h1 className="text-3xl font-black text-center text-white">¡Pedido Generado!</h1>
-            <div className="w-full max-w-md space-y-4">
+      const ticketDataUrl = useMemo(() => generateTicketImage(items, orderInfo, total), [items, orderInfo, total]);
 
-              <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
-                <div className="font-bold text-slate-300 mb-4 flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm">1</div>
-                  Descarga tu Ticket
-                </div>
-                <button onClick={() => generateTicketImage(items, orderInfo, total)} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-900/40">
-                  <Icons.Download className="w-6 h-6" /> Descargar Ticket (PNG)
-                </button>
-                <div className="mt-6 pt-6 border-t border-slate-700/50 text-center space-y-4">
-                  <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-700 text-slate-300 text-sm italic">
-                    <span className="text-xl block mb-2">📋</span>
-                    "Muestra este ticket en ventanilla para que preparen tu pedido."
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Número de Orden</div>
-                    <div className="font-mono text-3xl text-yellow-500 font-bold tracking-[0.2em]">#{orderInfo.ticketId}</div>
-                  </div>
+      return (
+        <div className="fixed inset-0 z-[70] bg-slate-900 flex flex-col animate-in fade-in duration-500">
+
+          {/* Full Screen Ticket Viewer */}
+          <div className="flex-1 overflow-y-auto flex justify-center items-start pt-6 pb-48 scrollbar-hide px-2">
+            <img src={ticketDataUrl} alt="Ticket Preview" className="w-full max-w-sm rounded-none shadow-2xl" style={{ objectFit: 'contain' }} />
+          </div>
+
+          {/* Floating Action Bar */}
+          <div className="fixed bottom-0 left-0 right-0 bg-slate-800/95 backdrop-blur-md rounded-t-3xl border-t border-slate-700 p-5 shadow-[0_-10px_40px_rgba(0,0,0,0.6)] z-10 animate-in slide-in-from-bottom duration-500">
+            <div className="max-w-md mx-auto">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="text-4xl">🎟️</div>
+                <div>
+                  <h3 className="font-black text-xl text-white mb-1">¡Resumen Listo!</h3>
+                  <p className="text-sm font-bold text-slate-300 leading-snug">
+                    Muestra tu ticket en caja o díctaselo a quien te atienda para que preparen tu pedido.
+                  </p>
+                  <p className="text-xs text-slate-500 italic mt-1 pb-1">La app es solo una guía visual.</p>
                 </div>
               </div>
 
               <div className="flex gap-2">
-                <a href="https://maps.app.goo.gl/BWJjWYbNft93Ei4s8" target="_blank" className="flex-1 bg-slate-700 text-slate-300 font-bold py-3 rounded-lg hover:bg-slate-600 flex items-center justify-center gap-2">
-                  <Icons.Location className="w-4 h-4" /> Ver Ubicación
-                </a>
-                <button onClick={onClose} className="flex-1 bg-slate-700 text-emerald-400 font-bold py-3 rounded-lg hover:bg-slate-600 border border-emerald-500/30">Listo / Inicio</button>
+                <button onClick={() => {
+                  const link = document.createElement('a');
+                  link.download = `Ticket_${orderInfo.ticketId}.png`;
+                  link.href = ticketDataUrl;
+                  link.click();
+                }} className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-95 text-sm flex items-center justify-center gap-2">
+                  <Icons.Download className="w-5 h-5" /> Descargar
+                </button>
+
+                <button onClick={onClose} className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-95 text-sm flex items-center justify-center gap-2">
+                  ¡Listo! Inicio
+                </button>
               </div>
 
+              <div className="mt-4 text-center">
+                <div className="font-mono text-2xl text-yellow-500 font-bold tracking-widest">#{orderInfo.ticketId}</div>
+              </div>
             </div>
           </div>
         </div>
