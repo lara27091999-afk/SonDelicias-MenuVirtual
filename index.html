@@ -1,1155 +1,752 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <title>Menú Virtual</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    body {
-      background: #0f172a;
-      margin: 0;
-      touch-action: manipulation;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>SON D'ELICIAS - Menú</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --acc:#22c55e;
+  --bg:#f4f4f6; --bg2:#fff;
+  --card:#fff;
+  --t1:#0e0e10; --t2:#3a3a3e; --t3:#8a8a90;
+  --border:#e5e5e8;
+  --red:#e3342f; --green:#16a34a;
+  --shadow:0 1px 3px rgba(0,0,0,.06);
+  --r:14px;
+}
+body.dark{
+  --bg:#0e0e12; --bg2:#1a1a20; --card:#1a1a20;
+  --t1:#f5f5f7; --t2:#c9c9d1; --t3:#7d7d87;
+  --border:#2a2a32;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+html,body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
 
-    .scrollbar-hide::-webkit-scrollbar {
-      display: none;
-    }
+/* ── Header ───────────────────────────────── */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20}
+.topbar-logo{width:36px;height:36px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;box-shadow:var(--shadow)}
+.topbar-name{flex:1;font-size:14px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar-clock{font-family:ui-monospace,Menlo,Consolas,monospace;text-align:right;color:var(--acc);font-size:13px;font-weight:700;line-height:1.1}
+.topbar-clock-date{font-size:10px;color:var(--t3);font-weight:500;text-transform:capitalize;margin-top:1px}
+.topbar-btn{width:36px;height:36px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--t1);flex-shrink:0}
+.topbar-btn:active{opacity:.7}
 
-    .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-  </style>
+.menu-hdr{padding:18px 14px 0}
+.menu-hdr h1{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.menu-hdr .sub{font-size:13px;color:var(--t3);margin-top:2px}
+.status-pill{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);border-radius:99px;padding:5px 12px;font-size:12px;color:var(--t2);margin-top:8px}
+.dot-green{width:8px;height:8px;border-radius:50%;background:#22c55e}
+.dot-red{width:8px;height:8px;border-radius:50%;background:#ef4444}
+
+.action-row{padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap}
+.action-btn{background:var(--bg2);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font-size:12px;color:var(--t1);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.action-btn:active{opacity:.7}
+.action-btn img{width:16px;height:16px;border-radius:3px}
+
+/* ── Grid de categorías ───────────────────── */
+.grid{padding:6px 14px 100px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(4,1fr)}}
+.cat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s;display:flex;flex-direction:column;gap:6px;min-height:120px}
+.cat-card:active{transform:scale(.97)}
+.cat-emoji{font-size:30px;line-height:1}
+.cat-name{font-weight:700;font-size:14px;color:var(--t1);line-height:1.2}
+.cat-price{color:var(--acc);font-weight:700;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--t3);font-size:14px}
+
+/* ── Floating cart ────────────────────────── */
+.cart-fab{position:fixed;bottom:18px;left:14px;background:var(--acc);color:#fff;border:none;width:60px;height:60px;border-radius:50%;font-size:22px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:30;display:flex;align-items:center;justify-content:center}
+.cart-badge{position:absolute;top:-2px;right:-2px;background:#000;color:#fff;font-size:11px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
+
+/* ── Modal genérico (bottom sheet) ────────── */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:100}
+.modal.open{display:flex;animation:fadein .15s}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.modal-box{background:var(--card);border-radius:18px 18px 0 0;width:100%;max-width:680px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;animation:slideup .2s}
+@keyframes slideup{from{transform:translateY(40px)}to{transform:translateY(0)}}
+.modal-grip{width:40px;height:4px;background:var(--border);border-radius:2px;margin:8px auto 4px}
+.modal-hdr{padding:6px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.modal-back{background:none;border:none;font-size:20px;color:var(--t1);cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.modal-hdr h3{flex:1;font-size:16px;font-weight:700}
+.modal-x{background:none;border:none;font-size:22px;color:var(--t3);cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.modal-body{flex:1;overflow-y:auto;padding:14px 16px}
+
+/* ── Lista subcategorías ──────────────────── */
+.sc-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:var(--bg2);cursor:pointer}
+.sc-row:active{background:var(--bg)}
+.sc-emoji{font-size:22px;line-height:1}
+.sc-name{flex:1;font-weight:600;font-size:14px}
+.sc-price{color:var(--acc);font-weight:700;font-size:14px;font-family:ui-monospace,Menlo,Consolas,monospace}
+
+/* ── Modal producto ──────────────────────── */
+.sect{margin-bottom:18px}
+.sect-ttl{display:flex;align-items:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);margin-bottom:8px}
+.sect-ttl .progress{margin-left:auto;font-weight:600;font-size:11px;color:var(--t3);background:var(--bg);padding:2px 8px;border-radius:99px}
+.sect-ttl .progress.ok{color:#fff;background:var(--green)}
+.sect-ttl .progress.warn{color:#fff;background:#f59e0b}
+.opt{padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s;background:var(--bg2)}
+.opt.selected{border-color:var(--acc);background:rgba(249,115,22,.04)}
+.radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;position:relative}
+.opt.selected .radio{border-color:var(--acc)}
+.opt.selected .radio::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--acc)}
+.opt-name{flex:1;font-size:14px;font-weight:500}
+.opt-price{color:var(--acc);font-weight:700;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.qty-step{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:2px}
+.qty-step button{background:var(--bg2);border:none;width:30px;height:30px;border-radius:50%;font-size:18px;font-weight:700;cursor:pointer;color:var(--acc);display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
+.qty-step button:active{opacity:.6}
+.qty-step span{min-width:22px;text-align:center;font-weight:700;font-size:13px}
+.opt.qty-row{cursor:default}
+
+/* ── Sticky footer del producto ──────────── */
+.prod-foot{border-top:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--card)}
+.prod-foot .qty-step{flex-shrink:0}
+.prod-foot .total{flex:1;text-align:center;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:18px;font-weight:800;color:var(--acc)}
+.btn-add{background:var(--acc);color:#fff;border:none;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer}
+.btn-add:active{opacity:.85}
+.btn-add[disabled]{opacity:.45;cursor:not-allowed}
+
+/* ── Carrito ──────────────────────────────── */
+.cart-item{padding:10px 0;border-bottom:1px solid var(--border)}
+.cart-item:last-child{border-bottom:none}
+.cart-item-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.cart-item-name{flex:1;font-weight:600;font-size:14px}
+.cart-item-detail{font-size:11px;color:var(--t3);line-height:1.4;margin-top:2px}
+.cart-item-del{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;padding:4px}
+.totals{padding:14px 0;border-top:2px solid var(--border);margin-top:8px;font-size:18px;font-weight:800;display:flex;justify-content:space-between;color:var(--acc);font-family:ui-monospace,Menlo,Consolas,monospace}
+.modal-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:10px;background:var(--card)}
+.btn{display:inline-block;padding:11px 16px;background:var(--acc);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
+.btn:active{opacity:.85}
+.btn-ghost{background:var(--bg);color:var(--t1);border:1px solid var(--border)}
+.btn-block{display:block;width:100%}
+
+/* ── QR ──────────────────────────────────── */
+.qr-box{padding:24px;text-align:center}
+.qr-box img, .qr-box canvas{display:block;margin:0 auto 14px;max-width:280px;width:100%;height:auto;background:#fff;padding:8px;border-radius:8px}
+
+/* ── Botón WhatsApp ──────────────────────── */
+.btn-wa{background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-wa:active{opacity:.85}
+.btn-wa img{width:20px;height:20px;object-fit:contain;flex-shrink:0}
+
+/* ── Horario modal ───────────────────────── */
+.sch-table{width:100%;border-collapse:collapse;font-size:13px}
+.sch-table td{padding:8px 6px;border-bottom:1px solid var(--border)}
+.sch-day{font-weight:600;color:var(--t1)}
+.sch-time{color:var(--t2);text-align:right;font-family:ui-monospace,Menlo,Consolas,monospace}
+.sch-closed{color:var(--red);font-weight:600}
+.sch-today{background:rgba(249,115,22,.06)}
+.sch-section-ttl{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--t3);margin:12px 0 6px;letter-spacing:.05em}
+
+/* ── Closed mask (no cerrable) ──────────── */
+.closed-mask{position:fixed;inset:0;background:rgba(0,0,0,.9);color:#fff;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;z-index:200}
+.closed-mask.show{display:flex}
+.closed-mask h2{font-size:22px;margin-bottom:10px}
+.closed-mask p{font-size:13px;opacity:.85;line-height:1.5;max-width:380px;margin-bottom:14px}
+.closed-mask .sch-table{max-width:340px;color:#fff}
+.closed-mask .sch-table td{border-color:rgba(255,255,255,.15)}
+.closed-mask .sch-table .sch-day{color:#fff}
+.closed-mask .sch-table .sch-time{color:#e5e5e8}
+
+</style>
 </head>
-
 <body>
-  <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect, useMemo } = React;
+<!-- ─── HEADER ─────────────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-logo">🍓</div>
+  <div class="topbar-name">SON D'ELICIAS</div>
+  <div class="topbar-clock">
+    <div id="clock-time">--:--</div>
+    <div class="topbar-clock-date" id="clock-date">—</div>
+  </div>
+  <button class="topbar-btn" id="dark-btn" onclick="toggleDark()" aria-label="Tema">🌙</button>
+</div>
 
-    // --- ICONS ---
-    const Icon = ({ char, className }) => <span className={`flex items-center justify-center ${className}`}>{char}</span>;
-    const Icons = {
-      Cart: (p) => <Icon char="🛒" {...p} />,
-      Trash: (p) => <Icon char="🗑️" {...p} />,
-      Edit: (p) => <Icon char="✏️" {...p} />,
-      Back: (p) => <Icon char="←" {...p} />,
-      Close: (p) => <Icon char="✕" {...p} />,
-      Money: (p) => <Icon char="💵" {...p} />,
-      Check: (p) => <Icon char="✔️" {...p} />,
-      Location: (p) => <Icon char="📍" {...p} />,
-      Whatsapp: (p) => <Icon char="💬" {...p} />,
-      Download: (p) => <Icon char="⬇️" {...p} />,
-      Store: (p) => <Icon char="🏪" {...p} />,
-      Bike: (p) => <Icon char="🏍️" {...p} />,
-      Clock: (p) => <Icon char="🕐" {...p} />,
-      Phone: (p) => <Icon char="📱" {...p} />
-    };
+<div class="menu-hdr">
+  <h1>Menú</h1>
+  <div class="sub">Toca una categoría para ordenar</div>
+  <div class="status-pill" id="status-pill"><span class="dot-green"></span><span id="status-text">Abierto</span></div>
+</div>
 
-    // --- SCHEDULE VERIFICATION ---
-    // Virtual store hours: 3:00pm to 10:30pm (15:00 - 22:30)
-    // Physical store hours: 5:00pm to 10:00pm (17:00 - 22:00)
-    // Closed: Saturday (day 6)
-    // Open: Sunday (0), Monday (1), Tuesday (2), Wednesday (3), Thursday (4), Friday (5)
+<div class="action-row" id="action-row"></div>
 
-    const isVirtualStoreOpen = () => {
-      const now = new Date();
-      const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const currentTime = hours * 60 + minutes; // Convert to minutes since midnight
+<!-- ─── GRID DE CATEGORÍAS ────────────────────────── -->
+<div class="grid" id="cat-grid"></div>
 
-      // Saturday is always closed
-      if (dayOfWeek === 6) return false;
+<!-- ─── FAB CARRITO ─────────────────────────────── -->
+<button class="cart-fab" id="cart-fab" onclick="openCart()" style="display:none">
+  🛒 <span class="cart-badge" id="cart-badge">0</span>
+</button>
 
-      // Virtual store hours: 15:00 (3:00pm) to 22:30 (10:30pm)
-      const openTime = 15 * 60;  // 15:00 = 900 minutes
-      const closeTime = 22 * 60 + 30; // 22:30 = 1350 minutes
+<!-- ─── MODAL: Lista de subcategorías ─────────── -->
+<div class="modal" id="modal-sc-list">
+  <div class="modal-box">
+    <div class="modal-grip"></div>
+    <div class="modal-hdr">
+      <h3 id="modal-sc-list-title">Categoría</h3>
+      <button class="modal-x" onclick="closeModal('modal-sc-list')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-sc-list-body"></div>
+  </div>
+</div>
 
-      return currentTime >= openTime && currentTime < closeTime;
-    };
+<!-- ─── MODAL: Producto (variantes, grupos, extras) ─ -->
+<div class="modal" id="modal-product">
+  <div class="modal-box">
+    <div class="modal-grip"></div>
+    <div class="modal-hdr">
+      <button class="modal-back" onclick="closeModal('modal-product');setTimeout(()=>document.getElementById('modal-sc-list').classList.add('open'),50)">‹</button>
+      <h3 id="modal-product-title">Producto</h3>
+      <button class="modal-x" onclick="closeModal('modal-product')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-product-body"></div>
+    <div class="prod-foot">
+      <div class="qty-step">
+        <button onclick="changeProdQty(-1)">−</button>
+        <span id="prod-qty">1</span>
+        <button onclick="changeProdQty(1)">+</button>
+      </div>
+      <div class="total" id="prod-total">$0.00</div>
+      <button class="btn-add" id="prod-add" onclick="addCurrentToCart()">Agregar al carrito</button>
+    </div>
+  </div>
+</div>
 
-    // --- CLOSED MODAL COMPONENT ---
-    function ClosedModal({ onClose }) {
-      const GOOGLE_MAPS_LINK = "https://maps.app.goo.gl/BWJjWYbNft93Ei4s8";
+<!-- ─── MODAL: Carrito ───────────────────────── -->
+<div class="modal" id="modal-cart">
+  <div class="modal-box">
+    <div class="modal-grip"></div>
+    <div class="modal-hdr">
+      <h3>🛒 Tu pedido</h3>
+      <button class="modal-x" onclick="closeModal('modal-cart')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-cart-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('modal-cart')">Seguir</button>
+      <button class="btn btn-wa" style="flex:1" onclick="shareWhatsapp()">
+        <img src="https://static.vecteezy.com/system/resources/previews/018/930/564/large_2x/whatsapp-logo-whatsapp-icon-whatsapp-transparent-free-png.png" alt="WhatsApp"> Enviar por WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
 
-      const virtualHours = [
-        { day: "Domingo", hours: "3:00pm a 10:30pm" },
-        { day: "Lunes", hours: "3:00pm a 10:30pm" },
-        { day: "Martes", hours: "3:00pm a 10:30pm" },
-        { day: "Miércoles", hours: "3:00pm a 10:30pm" },
-        { day: "Jueves", hours: "3:00pm a 10:30pm" },
-        { day: "Viernes", hours: "3:00pm a 10:30pm" },
-        { day: "Sábado", hours: "Cerrado", closed: true }
-      ];
+<!-- ─── MODAL: QR ──────────────────────────── -->
+<div class="modal" id="modal-qr">
+  <div class="modal-box">
+    <div class="modal-grip"></div>
+    <div class="modal-hdr">
+      <h3>📱 Muestra este QR</h3>
+      <button class="modal-x" onclick="closeModal('modal-qr')">✕</button>
+    </div>
+    <div class="modal-body qr-box" id="modal-qr-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-block" onclick="closeModal('modal-qr')">Listo</button>
+    </div>
+  </div>
+</div>
 
-      const physicalHours = [
-        { day: "Domingo", hours: "5:00pm a 10:00pm" },
-        { day: "Lunes", hours: "5:00pm a 10:00pm" },
-        { day: "Martes", hours: "5:00pm a 10:00pm" },
-        { day: "Miércoles", hours: "5:00pm a 10:00pm" },
-        { day: "Jueves", hours: "5:00pm a 10:00pm" },
-        { day: "Viernes", hours: "5:00pm a 10:00pm" },
-        { day: "Sábado", hours: "Cerrado", closed: true }
-      ];
+<!-- ─── MODAL: Horarios (cerrable) ────────── -->
+<div class="modal" id="modal-sch">
+  <div class="modal-box">
+    <div class="modal-grip"></div>
+    <div class="modal-hdr">
+      <h3>🕐 Horarios</h3>
+      <button class="modal-x" onclick="closeModal('modal-sch')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-sch-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-block" onclick="closeModal('modal-sch')">Cerrar</button>
+    </div>
+  </div>
+</div>
 
-      return (
-        <div className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-gradient-to-b from-slate-800 to-slate-900 rounded-3xl border border-slate-700 shadow-2xl overflow-hidden">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-pink-600 to-purple-600 p-6 text-center relative">
-              {onClose && (
-                <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white font-bold transition-all">
-                  ✕
-                </button>
-              )}
-              <div className="text-5xl mb-3">{onClose ? "🕐" : "😔"}</div>
-              <h1 className="text-2xl md:text-3xl font-black text-white mb-2">{onClose ? "Nuestros Horarios" : "Lo sentimos, estamos cerrados"}</h1>
-              <p className="text-pink-100 text-sm md:text-base">{onClose ? "Visítanos en estos horarios:" : "Nuestros horarios son:"}</p>
-            </div>
+<!-- ─── Closed mask (NO cerrable) ─────────── -->
+<div class="closed-mask" id="closed-mask">
+  <h2>⏰ Pedidos cerrados</h2>
+  <p>Por ahora no aceptamos pedidos en línea. Estos son nuestros horarios:</p>
+  <div id="closed-sch"></div>
+</div>
 
-            {/* Schedule Grid */}
-            <div className="p-4 md:p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<script>
+const DATA = {"businessName":"SON D'ELICIAS","emoji":"🍓","accentColor":"#22c55e","priceMode":"combined","mapsUrl":"https://maps.app.goo.gl/JaL4YjMcN8P3yiH98","socialUrls":[],"schedulePhysical":{"0":{"closed":false,"open":"17:00","close":"21:30"},"1":{"open":"17:00","close":"21:30","closed":false},"2":{"open":"17:00","close":"22:30","closed":false},"3":{"open":"17:00","close":"21:30","closed":false},"4":{"open":"17:00","close":"21:30","closed":false},"5":{"open":"05:00","close":"22:30","closed":false},"6":{"open":"09:00","close":"21:00","closed":true}},"scheduleOnline":{"0":{"closed":false,"open":"17:00","close":"21:30"},"1":{"open":"17:00","close":"21:30","closed":false},"2":{"open":"17:00","close":"21:30","closed":false},"3":{"open":"17:00","close":"21:30","closed":false},"4":{"open":"17:00","close":"21:30","closed":false},"5":{"open":"17:00","close":"21:30","closed":false},"6":{"open":"10:00","close":"20:00","closed":true}},"categories":[{"name":"Fresas con crema","emoji":"🍓","subcategories":[{"name":"Chico","emoji":"🍓","price":60,"variants":[{"name":"NORMALES","priceAdd":0},{"name":"PINGÜINO","priceAdd":10},{"name":"GANSITO","priceAdd":10},{"name":"CHOCORROL","priceAdd":10},{"name":"BUBULUBU","priceAdd":10},{"name":"KINDER BUENO","priceAdd":15},{"name":"PALETA PAYASO","priceAdd":15},{"name":"PAY TORTUGA","priceAdd":20},{"name":"PAY ZARZAMORA","priceAdd":20},{"name":"PAY DE QUESO","priceAdd":20},{"name":"FERRERO ROCHER","priceAdd":50}],"groups":[{"name":"Bases","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nutella"},{"name":"Chantilly"},{"name":"Plt chocolate"}]},{"name":"Topping","emoji":"🫙","min":0,"max":1,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]},{"name":"Mediano","emoji":"🍓","price":80,"variants":[{"name":"NORMALES","priceAdd":0},{"name":"PINGÜINO","priceAdd":10},{"name":"GANSITO","priceAdd":10},{"name":"CHOCORROL","priceAdd":10},{"name":"BUBULUBU","priceAdd":10},{"name":"KINDER BUENO","priceAdd":15},{"name":"PALETA PAYASO","priceAdd":15},{"name":"PAY TORTUGA","priceAdd":20},{"name":"PAY ZARZAMORA","priceAdd":20},{"name":"PAY DE QUESO","priceAdd":20},{"name":"FERRERO ROCHER","priceAdd":50}],"groups":[{"name":"Bases","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nutella"},{"name":"Chantilly"},{"name":"Plt chocolate"}]},{"name":"Topping","emoji":"🫙","min":0,"max":2,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]},{"name":"Grande","emoji":"🍓","price":110,"variants":[{"name":"NORMALES","priceAdd":0},{"name":"PINGÜINO","priceAdd":10},{"name":"GANSITO","priceAdd":10},{"name":"CHOCORROL","priceAdd":10},{"name":"BUBULUBU","priceAdd":10},{"name":"KINDER BUENO","priceAdd":15},{"name":"PALETA PAYASO","priceAdd":15},{"name":"PAY TORTUGA","priceAdd":20},{"name":"PAY ZARZAMORA","priceAdd":20},{"name":"PAY DE QUESO","priceAdd":20},{"name":"FERRERO ROCHER","priceAdd":50}],"groups":[{"name":"Bases","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nutella"},{"name":"Chantilly"},{"name":"Plt chocolate"}]},{"name":"Topping","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]}]},{"name":"Frappes","emoji":"🧊","subcategories":[{"name":"Frappe agua","emoji":"🥛","price":70,"variants":[{"name":"ICE CEREZA","priceAdd":0},{"name":"ICE MORA AZUL","priceAdd":0},{"name":"MANGO","priceAdd":0},{"name":"PEPINO","priceAdd":0},{"name":"CHAMOYADA DE PIÑA","priceAdd":0},{"name":"FRUTOS ROJOS","priceAdd":0}],"groups":[{"name":"vaso","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"}]}],"extras":[{"name":"vaso","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"}]}]},{"name":"Frappe de leche","emoji":"🧋","price":80,"variants":[{"name":"OREO","priceAdd":0},{"name":"GANSITO","priceAdd":0},{"name":"PINGÜINO","priceAdd":0},{"name":"CHOCORROL","priceAdd":0},{"name":"BUBULUBU","priceAdd":0},{"name":"KINDER DELIS","priceAdd":0},{"name":"FERRERO ROHER","priceAdd":0},{"name":"NUTELLA","priceAdd":0},{"name":"M&M's","priceAdd":0},{"name":"MAZAPAN","priceAdd":0},{"name":"PIÑA COLADA","priceAdd":0},{"name":"MOKA","priceAdd":0},{"name":"FRUTOS ROJOS","priceAdd":0}],"groups":[{"name":"Leche","emoji":"🫙","min":0,"max":1,"items":[{"name":"Entera"},{"name":"Deslactosada"}]}],"extras":[]}]},{"name":"Creppa","emoji":"🫓","subcategories":[{"name":"Dulce","emoji":"🫓","price":80,"variants":[{"name":"Nutella","priceAdd":0},{"name":"queso crema","priceAdd":0}],"groups":[{"name":"Fruta","emoji":"🫙","min":0,"max":2,"items":[{"name":"Fresa"},{"name":"Platano"}]},{"name":"Topping","emoji":"🫙","min":0,"max":1,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Fruta","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Fresa"},{"name":"Platano"}]},{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]},{"name":"Salada","emoji":"🫓","price":80,"variants":[{"name":"jamon y queso crema","priceAdd":0},{"name":"jamon y queso mozarella","priceAdd":0}],"groups":[],"extras":[]}]},{"name":"Papitas","emoji":"🥔","subcategories":[{"name":"Tostitos","emoji":"📏","price":80,"variants":[{"name":"Verdes","priceAdd":0},{"name":"Morados","priceAdd":0}],"groups":[{"name":"Preparación","emoji":"🫙","min":0,"max":5,"items":[{"name":"Elote"},{"name":"Queso amarillo"},{"name":"Crema"},{"name":"Queso rayallo"},{"name":"Salsa casera"}]}],"extras":[{"name":"Preparación","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Elote"},{"name":"Queso amarillo"},{"name":"Crema"},{"name":"Queso rayallo"},{"name":"Salsa casera"}]}]}]},{"name":"Bebidas","emoji":"🥤","subcategories":[{"name":"Bebida preparada","emoji":"🥤","price":80,"variants":[{"name":"RUSA","priceAdd":0},{"name":"TOPOCHICO","priceAdd":0},{"name":"SANGRIA","priceAdd":0},{"name":"PEÑAFIEL FRESA","priceAdd":0}],"groups":[{"name":"Fruta","emoji":"🫙","min":0,"max":1,"items":[{"name":"Piña"},{"name":"Fresa"}]},{"name":"Vaso","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"},{"name":"Gomitas"}]}],"extras":[{"name":"Vaso","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"},{"name":"Gomitas"}]}]}]},{"name":"Licuado","emoji":"🍧","subcategories":[{"name":"licuado","emoji":"📏","price":70,"variants":[{"name":"FRESA","priceAdd":0},{"name":"PLATANO","priceAdd":0},{"name":"CHOCOLATE","priceAdd":0}],"groups":[{"name":"Leche","emoji":"🫙","min":0,"max":1,"items":[{"name":"Entera"},{"name":"Deslactosada"}]}],"extras":[]}]},{"name":"Malteada","emoji":"🍨","subcategories":[{"name":"Malteada","emoji":"📏","price":80,"variants":[{"name":"FRESA","priceAdd":0},{"name":"CHOCOLATE","priceAdd":0}],"groups":[{"name":"Leche","emoji":"🫙","min":0,"max":1,"items":[{"name":"Entera"},{"name":"Deslactosada"}]}],"extras":[]}]},{"name":"Banderillas coreanas","emoji":"🍢","subcategories":[{"name":"CLASICA","emoji":"📏","price":65,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]},{"name":"CHEETOS FLAMING HOT","emoji":"📏","price":80,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]},{"name":"TAKIS FUEGO","emoji":"📏","price":80,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]},{"name":"PAPA FRITA","emoji":"📏","price":85,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]}]},{"name":"Rebanada","emoji":"🍰","subcategories":[{"name":"Pay de queso","emoji":"🍰","price":65,"variants":[{"name":"PAY TORTUGA","priceAdd":0},{"name":"PAY ZARZAMORA","priceAdd":0},{"name":"PAY DE QUESO","priceAdd":0}],"groups":[{"name":"TOPPING","emoji":"🫙","min":0,"max":1,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Oreo"},{"name":"Krankis"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"TOPPING","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Oreo"},{"name":"Krankis"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]}]},{"name":"Comida","emoji":"🍴","subcategories":[{"name":"Hamburguesa","emoji":"🍔","price":50,"variants":[{"name":"Normal","priceAdd":0},{"name":"Doble carne","priceAdd":60}],"groups":[{"name":"Ingredientes","emoji":"🥩","min":0,"max":3,"items":[{"name":"Carne"},{"name":"Jamón"},{"name":"Queso"}]},{"name":"Verduras","emoji":"🥬","min":0,"max":4,"items":[{"name":"Lechuga"},{"name":"Tomate"},{"name":"Cebolla"},{"name":"Aguacate"}]},{"name":"Aderezos","emoji":"🥫","min":0,"max":3,"items":[{"name":"Mayonesa"},{"name":"Catsup"},{"name":"Mostaza"}]}],"extras":[{"name":"Ingredientes","emoji":"🥩","pricePerUnit":15,"items":[{"name":"Carne"},{"name":"Jamón"},{"name":"Queso"}]},{"name":"Verduras","emoji":"🥬","pricePerUnit":8,"items":[{"name":"Lechuga"},{"name":"Tomate"},{"name":"Cebolla"},{"name":"Aguacate"}]},{"name":"Aderezos","emoji":"🥫","pricePerUnit":5,"items":[{"name":"Mayonesa"},{"name":"Catsup"},{"name":"Mostaza"}]}]}]}]};
+const cart = [];
+let currentCatIdx = -1;
+let currentSc = null; /* { catIdx, scIdx, variantIdx, groups:{}, extras:{}, qty } */
+const DAYS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
-                {/* Virtual Store Hours - Left */}
-                <div className="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
-                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-700">
-                    <div className="p-2 bg-pink-500/20 rounded-lg">
-                      <Icons.Phone className="w-5 h-5 text-pink-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-white text-sm md:text-base">Horario Menú Virtual</h3>
-                      <p className="text-xs text-slate-400">Pedidos en línea</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {virtualHours.map((item, idx) => (
-                      <div key={idx} className={`flex justify-between text-sm ${item.closed ? 'text-red-400' : 'text-slate-300'}`}>
-                        <span className="font-medium">{item.day}:</span>
-                        <span className={item.closed ? 'font-bold' : ''}>{item.hours}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function money(n){return '$'+(Math.round(n*100)/100).toFixed(2);}
 
-                {/* Physical Store Hours - Right */}
-                <div className="bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
-                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-700">
-                    <div className="p-2 bg-purple-500/20 rounded-lg">
-                      <Icons.Store className="w-5 h-5 text-purple-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-white text-sm md:text-base">Horario Tienda Física</h3>
-                      <p className="text-xs text-slate-400">Visítanos en persona</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {physicalHours.map((item, idx) => (
-                      <div key={idx} className={`flex justify-between text-sm ${item.closed ? 'text-red-400' : 'text-slate-300'}`}>
-                        <span className="font-medium">{item.day}:</span>
-                        <span className={item.closed ? 'font-bold' : ''}>{item.hours}</span>
-                      </div>
-                    ))}
-                  </div>
+/* ─── Reloj ─────────────────────────────────── */
+function updateClock(){
+  const now = new Date();
+  const hh = now.getHours(), mm = now.getMinutes();
+  const ap = hh >= 12 ? 'p.m.' : 'a.m.';
+  let h12 = hh % 12; if (h12 === 0) h12 = 12;
+  document.getElementById('clock-time').textContent =
+    String(h12).padStart(2,'0')+':'+String(mm).padStart(2,'0')+' '+ap;
+  const ds = now.toLocaleDateString('es-MX', { weekday:'short', day:'2-digit', month:'short' });
+  document.getElementById('clock-date').textContent = ds;
+}
+setInterval(updateClock, 30000);
+updateClock();
 
-                  {/* Location Button */}
-                  <a
-                    href={GOOGLE_MAPS_LINK}
-                    target="_blank"
-                    className="mt-4 w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold py-3 rounded-xl hover:from-pink-500 hover:to-purple-500 flex items-center justify-center gap-2 shadow-lg shadow-pink-900/30 transition-all active:scale-95"
-                  >
-                    <Icons.Location className="w-5 h-5" /> Ubicación
-                  </a>
-                </div>
+/* ─── Tema (dark mode) ─────────────────────── */
+function applyDarkPreference(){
+  const saved = localStorage.getItem('mw_dark');
+  let dark;
+  if (saved === '1') dark = true;
+  else if (saved === '0') dark = false;
+  else dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.body.classList.toggle('dark', dark);
+  document.getElementById('dark-btn').textContent = dark ? '☀️' : '🌙';
+}
+function toggleDark(){
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('mw_dark', isDark ? '1' : '0');
+  document.getElementById('dark-btn').textContent = isDark ? '☀️' : '🌙';
+}
+applyDarkPreference();
 
-              </div>
-            </div>
-
-            {/* Footer Message */}
-            <div className="px-6 pb-6 text-center">
-              <p className="text-slate-400 text-xs md:text-sm">
-                ¡Gracias por tu interés! Regresa dentro de nuestro horario de atención 🍓
-              </p>
-            </div>
-          </div>
-        </div>
-      );
+/* ─── Horario ──────────────────────────────── */
+function isOnlineOpen(){
+  const now = new Date();
+  const d = now.getDay();
+  const sch = (DATA.scheduleOnline||{})[d];
+  if (!sch || sch.closed) return false;
+  const hhmm = now.toTimeString().slice(0,5);
+  return hhmm >= (sch.open||'00:00') && hhmm <= (sch.close||'23:59');
+}
+function renderScheduleTable(sch, todayIdx){
+  let html = '<table class="sch-table">';
+  for (let i=0;i<7;i++){
+    const d = sch[i]||{closed:true};
+    const cls = i === todayIdx ? 'sch-today' : '';
+    if (d.closed){
+      html += '<tr class="'+cls+'"><td class="sch-day">'+DAYS[i]+'</td><td class="sch-time sch-closed">Cerrado</td></tr>';
+    } else {
+      html += '<tr class="'+cls+'"><td class="sch-day">'+DAYS[i]+'</td><td class="sch-time">'+d.open+' — '+d.close+'</td></tr>';
     }
+  }
+  html += '</table>';
+  return html;
+}
+function openSchedule(){
+  const today = new Date().getDay();
+  const body = document.getElementById('modal-sch-body');
+  body.innerHTML =
+    '<div class="sch-section-ttl">💻 Pedidos en línea</div>' +
+    renderScheduleTable(DATA.scheduleOnline||{}, today) +
+    '<div class="sch-section-ttl">🏪 Tienda física</div>' +
+    renderScheduleTable(DATA.schedulePhysical||{}, today);
+  document.getElementById('modal-sch').classList.add('open');
+}
+function applyScheduleStatus(){
+  const open = isOnlineOpen();
+  const pill = document.getElementById('status-pill');
+  const txt  = document.getElementById('status-text');
+  if (open){
+    pill.querySelector('span:first-child').className = 'dot-green';
+    txt.textContent = 'Abierto - Toma tu pedido';
+  } else {
+    pill.querySelector('span:first-child').className = 'dot-red';
+    txt.textContent = 'Cerrado en línea';
+    /* Mostrar máscara no-cerrable */
+    const today = new Date().getDay();
+    document.getElementById('closed-sch').innerHTML = renderScheduleTable(DATA.scheduleOnline||{}, today);
+    document.getElementById('closed-mask').classList.add('show');
+  }
+}
 
-    // --- CONSTANTS ---
+/* ─── Acciones (Horario + Maps + Sociales) ── */
+function renderActionRow(){
+  const div = document.getElementById('action-row');
+  let html = '<button class="action-btn" onclick="openSchedule()">🕐 Horario</button>';
+  if (DATA.mapsUrl){
+    html += '<a class="action-btn" href="'+esc(DATA.mapsUrl)+'" target="_blank" style="text-decoration:none">📍 Ubicación</a>';
+  }
+  (DATA.socialUrls||[]).forEach(s => {
+    const ic = /^https?:\/\//.test(s.icon) ? '<img src="'+esc(s.icon)+'">' : esc(s.icon);
+    html += '<a class="action-btn" href="'+esc(s.url)+'" target="_blank" style="text-decoration:none">'+ic+' '+esc(s.label || 'Enlace')+'</a>';
+  });
+  div.innerHTML = html;
+}
 
-    const DATA_CATEGORIES = [
-      { id: 1, name: 'FRESAS CON CREMA' },
-      { id: 4, name: 'BEBIDAS' },
-      { id: 5, name: 'COMIDAS' }
-    ];
+/* ─── Helpers de precio por subcategoría ──── */
+function scPriceRange(sc){
+  /* Devuelve {min,max} considerando subcategoría + variantes */
+  const base = sc.price || 0;
+  if (!sc.variants.length) return { min:base, max:base };
+  const prices = sc.variants.map(v => base + (v.priceAdd||0));
+  return { min: Math.min(...prices), max: Math.max(...prices) };
+}
+function catPriceRange(cat){
+  let min = Infinity, max = -Infinity, any = false;
+  cat.subcategories.forEach(sc => {
+    const r = scPriceRange(sc);
+    if (r.max > 0) any = true;
+    if (r.min < min) min = r.min;
+    if (r.max > max) max = r.max;
+  });
+  return any ? { min, max } : null;
+}
 
-    const DATA_PRODUCTS = [
-      // ===== FRESAS CON CREMA =====
-      {
-        "id": 1, "name": "PERSONALIZA TUS FRESAS", "categoryId": 1,
-        "elements": [
-          { "id": "size", "name": "Tamaño", "type": "radio", "items": [{ "id": "s1", "name": "CHICA", "price": 60 }, { "id": "s2", "name": "MEDIANA", "price": 80 }, { "id": "s3", "name": "GRANDE", "price": 110 }] },
-          {
-            "id": "variant", "name": "Tipo de Fresa", "type": "radio", "items": [
-              { "id": "v1", "name": "NORMALES", "price": 0 },
-              { "id": "v2", "name": "GANSITO", "price": 10 },
-              { "id": "v3", "name": "PINGÜINO", "price": 10 },
-              { "id": "v4", "name": "CHOCORROL", "price": 10 },
-              { "id": "v5", "name": "BUBULUBU", "price": 10 },
-              { "id": "v6", "name": "KINDER BUENO", "price": 15 },
-              { "id": "v7", "name": "PALETA PAYASO", "price": 15 },
-              { "id": "v8", "name": "TROCITOS DE PAY", "price": 20 },
-              { "id": "v9", "name": "FERRERO ROCHER", "price": 50 }
-            ]
-          },
-          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Nutella", "price": 0 }, { "id": "b2", "name": "Chantilly", "price": 0 }, { "id": "b3", "name": "Plt de chocolate", "price": 0 }] },
-          { "id": "toppings", "name": "Toppings", "type": "topping", "max": 2, "allowRepeat": true, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
-          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella Liq", "price": 0 }] }
-        ]
-      },
+/* ─── Grid de categorías ──────────────────── */
+function renderGrid(){
+  const root = document.getElementById('cat-grid');
+  if (!DATA.categories.length){
+    root.innerHTML = '<div class="empty">📭 Sin productos cargados</div>';
+    return;
+  }
+  root.innerHTML = DATA.categories.map((c,ci) => {
+    const n = c.subcategories.length;
+    const range = catPriceRange(c);
+    let priceHtml = '';
+    if (DATA.priceMode === 'separate' && range){
+      priceHtml = range.min === range.max
+        ? '<div class="cat-price">'+money(range.min)+'</div>'
+        : '<div class="cat-price">'+money(range.min)+' — '+money(range.max)+'</div>';
+    }
+    return '<div class="cat-card" onclick="openCategory('+ci+')">'+
+      '<div class="cat-emoji">'+(c.emoji?esc(c.emoji):'🍽')+'</div>'+
+      '<div class="cat-name">'+esc(c.name)+'</div>'+
+      '<div style="font-size:11px;color:var(--t3)">'+n+' '+(n===1?'tamaño':'tamaños')+'</div>'+
+      priceHtml+
+    '</div>';
+  }).join('');
+}
 
-      // ===== FRAPPES DE AGUA (Bajo Bebidas ID 4) =====
-      {
-        "id": 4, "name": "FRAPPE DE AGUA", "categoryId": 4,
-        "variants": [
-          { "id": "fa1", "name": "ICE CEREZA", "price": 70 },
-          { "id": "fa2", "name": "ICE MORA", "price": 70 },
-          { "id": "fa3", "name": "PIÑA COLADA", "price": 70 },
-          { "id": "fa4", "name": "CHAMOYADA DE PIÑA", "price": 70 },
-          { "id": "fa5", "name": "MANGO", "price": 70 },
-          { "id": "fa6", "name": "PEPINO", "price": 70 },
-          { "id": "fa7", "name": "FRUTOS ROJOS", "price": 70 }
-        ],
-        "elements": []
-      },
+/* ─── Modal subcategorías ──────────────────── */
+function openCategory(ci){
+  currentCatIdx = ci;
+  const c = DATA.categories[ci];
+  document.getElementById('modal-sc-list-title').textContent = (c.emoji?c.emoji+' ':'') + c.name;
+  const body = document.getElementById('modal-sc-list-body');
+  body.innerHTML = c.subcategories.map((sc,si) => {
+    /* Precio: separado = sc.price; combinado = no mostrar (lo veremos en variantes) */
+    let priceHtml = '';
+    if (DATA.priceMode === 'separate' && sc.price > 0){
+      priceHtml = '<div class="sc-price">'+money(sc.price)+'</div>';
+    }
+    return '<div class="sc-row" onclick="openProduct('+ci+','+si+')">'+
+      (sc.emoji?'<div class="sc-emoji">'+esc(sc.emoji)+'</div>':'')+
+      '<div class="sc-name">'+esc(sc.name)+'</div>'+
+      priceHtml +
+    '</div>';
+  }).join('');
+  document.getElementById('modal-sc-list').classList.add('open');
+}
 
-      // ===== FRAPPES DE LECHE (Bajo Bebidas ID 4) =====
-      {
-        "id": 5, "name": "FRAPPE DE LECHE", "categoryId": 4,
-        "variants": [
-          { "id": "fl1", "name": "MANGO LECHE", "price": 80 },
-          { "id": "fl2", "name": "MAZAPAN", "price": 80 },
-          { "id": "fl3", "name": "FRESAS CON CREMA", "price": 80 },
-          { "id": "fl4", "name": "GANSITO", "price": 80 },
-          { "id": "fl5", "name": "PINGUINO", "price": 80 },
-          { "id": "fl6", "name": "CHOCO ROL", "price": 80 },
-          { "id": "fl7", "name": "OREO", "price": 80 },
-          { "id": "fl8", "name": "KINDER DELICE", "price": 80 },
-          { "id": "fl9", "name": "FERRERO ROCHER", "price": 80 },
-          { "id": "fl10", "name": "NUTELLA", "price": 80 },
-          { "id": "fl11", "name": "FRUTOS ROJOS", "price": 80 }
-        ],
-        "elements": [
-          { "id": "leche", "name": "Tipo de Leche", "type": "radio", "max": 1, "items": [{ "id": "l1", "name": "Entera", "price": 0 }, { "id": "l2", "name": "Deslactosada", "price": 0 }] }
-        ]
-      },
+/* ─── Modal producto ───────────────────────── */
+function openProduct(ci, si){
+  const c  = DATA.categories[ci];
+  const sc = c.subcategories[si];
+  currentSc = { catIdx:ci, scIdx:si, variantIdx:-1, groups:{}, extras:{}, qty:1 };
+  document.getElementById('modal-product-title').textContent = (sc.emoji?sc.emoji+' ':'') + sc.name;
+  document.getElementById('prod-qty').textContent = '1';
+  /* Cerrar el modal de lista de subcategorías para "navegar adelante" */
+  closeModal('modal-sc-list');
+  renderProductBody();
+  document.getElementById('modal-product').classList.add('open');
+  updateProductTotal();
+}
 
-      // ===== BEBIDAS =====
-      {
-        "id": 6, "name": "LICUADOS", "categoryId": 4,
-        "variants": [
-          { "id": "l1", "name": "FRESA", "price": 80 },
-          { "id": "l2", "name": "PLATANO", "price": 80 },
-          { "id": "l3", "name": "CHOCOLATE", "price": 80 }
-        ],
-        "elements": [
-          { "id": "leche", "name": "Tipo de Leche", "type": "radio", "max": 1, "items": [{ "id": "l1", "name": "Entera", "price": 0 }, { "id": "l2", "name": "Deslactosada", "price": 0 }] }
-        ]
-      },
+function renderProductBody(){
+  const c  = DATA.categories[currentSc.catIdx];
+  const sc = c.subcategories[currentSc.scIdx];
+  const body = document.getElementById('modal-product-body');
+  let html = '';
 
-      // ===== COMIDAS =====
-      {
-        "id": 7, "name": "CREPAS DULCES", "categoryId": 5,
-        "variants": [
-          { "id": "cd1", "name": "NUTELLA", "price": 70 },
-          { "id": "cd2", "name": "QUESO CREMA", "price": 70 }
-        ],
-        "elements": [
-          { "id": "fruta", "name": "FRUTA", "type": "fruta", "max": 2, "items": [{ "id": "fr1", "name": "Fresa", "price": 0 }, { "id": "fr2", "name": "Platano", "price": 0 }] },
-          { "id": "toppings", "name": "TOPPING", "type": "topping", "max": 1, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
-          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella", "price": 0 }] }
-        ]
-      },
-      {
-        "id": 15, "name": "CREPAS SALADAS", "categoryId": 5,
-        "variants": [
-          { "id": "cs1", "name": "JAMON Y QUESO CREMA", "price": 70 },
-          { "id": "cs2", "name": "JAMON Y QUESO MOZZARELLA", "price": 70 }
-        ],
-        "elements": []
-      },
-      {
-        "id": 8, "name": "REBANADA DE PASTEL", "categoryId": 5,
-        "variants": [
-          { "id": "r1", "name": "PASTEL TORTUGA", "price": 65 },
-          { "id": "r2", "name": "PASTEL DE QUESO", "price": 65 }
-        ],
-        "elements": [
-          { "id": "toppings", "name": "TOPPING", "type": "topping", "max": 1, "items": [{ "id": "t1", "name": "Nuez", "price": 0 }, { "id": "t2", "name": "Granola", "price": 0 }, { "id": "t3", "name": "Lunetas", "price": 0 }, { "id": "t4", "name": "Bombones", "price": 0 }, { "id": "t5", "name": "Krankis", "price": 0 }, { "id": "t6", "name": "Oreo", "price": 0 }, { "id": "t7", "name": "Chispas", "price": 0 }, { "id": "t8", "name": "Almendras", "price": 0 }] },
-          { "id": "jarabes", "name": "Jarabes", "type": "jarabe", "max": 1, "items": [{ "id": "j1", "name": "Chocolate", "price": 0 }, { "id": "j2", "name": "Fresa", "price": 0 }, { "id": "j3", "name": "Cajeta", "price": 0 }, { "id": "j4", "name": "Lechera", "price": 0 }, { "id": "j5", "name": "Miel", "price": 0 }, { "id": "j6", "name": "Nutella", "price": 0 }] }
-        ]
-      },
-
-      {
-        "id": 11, "name": "TOSTITOS", "categoryId": 5,
-        "variants": [
-          { "id": "to1", "name": "VERDES", "price": 80 },
-          { "id": "to2", "name": "MORADOS", "price": 80 }
-        ],
-        "elements": [
-          { "id": "bases", "name": "Bases", "type": "base", "max": 3, "items": [{ "id": "b1", "name": "Elote", "price": 0 }, { "id": "b2", "name": "Crema", "price": 0 }, { "id": "b3", "name": "Queso amarillo", "price": 0 }, { "id": "b4", "name": "Salsa roja casera", "price": 0 }] },
-          { "id": "presentacion", "name": "Presentación", "type": "radio", "items": [{ "id": "p1", "name": "PARADOS", "price": 0 }, { "id": "p2", "name": "ACOSTADO", "price": 0 }] }
-        ]
+  /* Variantes */
+  if (sc.variants.length){
+    html += '<div class="sect"><div class="sect-ttl">Variante <span class="progress" id="prog-var">'+
+      (currentSc.variantIdx>=0?'✓':'Elige una')+'</span></div>';
+    sc.variants.forEach((v, vi) => {
+      const sel = currentSc.variantIdx === vi ? 'selected' : '';
+      let priceTxt = '';
+      if (DATA.priceMode === 'combined'){
+        const tot = sc.price + (v.priceAdd||0);
+        priceTxt = money(tot);
+      } else {
+        if (v.priceAdd && v.priceAdd > 0) priceTxt = '+'+money(v.priceAdd);
       }
-    ];
-
-    // --- CANVAS UTILS ---
-
-    // Helper to wrap text in Canvas
-    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-      const words = text.split(' ');
-      let line = '';
-      for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + ' ';
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
-        if (testWidth > maxWidth && n > 0) {
-          ctx.fillText(line, x, y);
-          line = words[n] + ' ';
-          y += lineHeight;
-        } else {
-          line = testLine;
-        }
-      }
-      ctx.fillText(line, x, y);
-      return y + lineHeight;
-    }
-
-    const generateTicketImage = (items, orderInfo, total) => {
-
-      // Helper function that handles drawing (or measuring)
-      // returns the final Y position
-      const renderTicket = (ctx, onlyMeasure = false) => {
-        // Setup fonts
-        if (!onlyMeasure) {
-          ctx.fillStyle = '#f8fafc';
-          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        }
-
-        const drawText = (text, x, y, font, color, align = 'left') => {
-          if (onlyMeasure) return;
-          ctx.font = font;
-          ctx.fillStyle = color;
-          ctx.textAlign = align;
-          ctx.fillText(text, x, y);
-        };
-
-        const drawRect = (x, y, w, h, color, strokeColor = null) => {
-          if (onlyMeasure) return;
-          ctx.fillStyle = color;
-          ctx.fillRect(x, y, w, h);
-          if (strokeColor) {
-            ctx.strokeStyle = strokeColor;
-            ctx.strokeRect(x, y, w, h);
-          }
-        };
-
-        // 1. Header
-        drawRect(20, 20, 460, 80, '#cbd5e1');
-        drawText("TICKET DE PEDIDO", 250, 60, 'bold 30px sans-serif', '#0f172a', 'center');
-        drawText(new Date().toLocaleString(), 250, 85, '16px sans-serif', '#0f172a', 'center');
-
-        let y = 140;
-
-        // Divider
-        if (!onlyMeasure) {
-          ctx.strokeStyle = '#94a3b8';
-          ctx.setLineDash([5, 5]);
-          ctx.beginPath(); ctx.moveTo(30, y); ctx.lineTo(470, y); ctx.stroke();
-          ctx.setLineDash([]);
-        }
-        y += 30;
-
-        // 2. Order Items
-        drawText("DATOS DEL PEDIDO:", 30, y, 'bold 20px sans-serif', '#0f172a'); y += 30;
-
-        items.forEach(item => {
-          drawText(item.categoryName, 40, y, 'bold 12px sans-serif', '#be185d'); y += 18;
-
-          if (!onlyMeasure) {
-            ctx.font = 'bold 18px sans-serif';
-            ctx.fillStyle = '#0f172a';
-            ctx.textAlign = 'left';
-            ctx.fillText(item.productName, 40, y);
-            ctx.textAlign = 'right';
-            ctx.fillText(`$${item.totalPrice.toFixed(2)}`, 460, y);
-          }
-          y += 22;
-
-          drawText(item.variantName, 40, y, 'italic 15px sans-serif', '#475569'); y += 20;
-
-          if (item.selections) {
-            const dummyCtx = onlyMeasure ? document.createElement('canvas').getContext('2d') : ctx;
-            if (onlyMeasure) dummyCtx.font = '14px sans-serif';
-            else ctx.font = '14px sans-serif';
-
-            Object.keys(item.selections).forEach(gid => {
-              const grp = item.elementConfig.find(g => g.id === gid);
-              const sels = item.selections[gid];
-              if (sels && sels.length) {
-                const names = sels.map(s => s.name).join(', ');
-                // Use real wrapText to get exact lines
-                if (!onlyMeasure) ctx.fillStyle = '#64748b';
-                y = wrapText(dummyCtx, `- ${grp.name}: ${names}`, 50, y, 400, 18);
-              }
-            });
-          }
-          y += 10;
-          drawRect(40, y, 420, 1, '#e2e8f0');
-          y += 20;
-        });
-
-        y += 20;
-
-        // 3. Total Bar
-        drawRect(30, y, 440, 70, '#0f172a');
-        if (!onlyMeasure) {
-          ctx.fillStyle = '#ffffff';
-          ctx.font = 'bold 28px sans-serif';
-          ctx.textAlign = 'left'; ctx.fillText("TOTAL A PAGAR:", 50, y + 45);
-          ctx.textAlign = 'right';
-          ctx.fillStyle = '#f472b6'; ctx.fillText(`$${total.toFixed(2)}`, 450, y + 45);
-        }
-
-        y += 100; // Space after total
-
-        // 4. Footer ID
-        drawText(`#${orderInfo.ticketId}`, 250, y, 'bold 30px monospace', '#94a3b8', 'center');
-
-        y += 50; // Bottom Padding
-
-        return y;
-      };
-
-      // PASS 1: Calculate exact height
-      const finalHeight = renderTicket(null, true);
-
-      // PASS 2: Draw
-      const canvas = document.createElement('canvas');
-      canvas.width = 500;
-      canvas.height = finalHeight;
-      const ctx = canvas.getContext('2d');
-      // Fix background since helper expects context
-      renderTicket(ctx, false);
-
-      return canvas.toDataURL('image/png');
-    };
-
-    const generatePaymentImage = (ticketId, total) => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 500;
-      canvas.height = 750; // Taller for warning
-      const ctx = canvas.getContext('2d');
-
-      // Gradient Background
-      const grd = ctx.createLinearGradient(0, 0, 0, 750);
-      grd.addColorStop(0, "#fff1f2"); // rose-50
-      grd.addColorStop(1, "#ffe4e6"); // rose-100
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, 500, 750);
-
-      // Frame
-      ctx.strokeStyle = "#be185d";
-      ctx.lineWidth = 5;
-      ctx.strokeRect(15, 15, 470, 720);
-
-      ctx.textAlign = 'center';
-
-      // Header
-      ctx.fillStyle = '#831843';
-      ctx.font = 'bold 32px sans-serif';
-      ctx.fillText("DATOS DE PAGO", 250, 80);
-
-      // Emoji Box
-      ctx.font = '60px serif';
-      ctx.fillText("🏦 💸 📱", 250, 160);
-
-      // Info
-      let y = 230;
-      ctx.textAlign = 'left';
-      ctx.font = '22px sans-serif';
-
-      const drawRow = (emoji, label, value) => {
-        ctx.font = '24px serif';
-        ctx.fillStyle = '#000';
-        ctx.fillText(emoji, 50, y);
-
-        ctx.font = 'bold 20px sans-serif';
-        ctx.fillStyle = '#64748b'; // slate-500
-        ctx.fillText(label, 90, y);
-
-        ctx.font = 'bold 24px sans-serif';
-        ctx.fillStyle = '#0f172a'; // slate-900
-        ctx.fillText(value, 90, y + 30);
-        y += 80;
-      };
-
-      drawRow("🏦", "BANCO:", "BANCOPPEL");
-      drawRow("👤", "TITULAR:", "Leonor Ortiz Cordova");
-      drawRow("💳", "CLABE:", "13 7580 1030 2125 6738");
-
-      // Total Exacto
-      y += 10;
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 20px sans-serif';
-      ctx.fillText("MONTO TOTAL EXACTO:", 250, y); y += 35;
-      ctx.font = 'bold 40px sans-serif';
-      ctx.fillStyle = '#be185d';
-      ctx.fillText(`$${total.toFixed(2)}`, 250, y); y += 50;
-
-      // Concept Box
-      ctx.fillStyle = '#fce7f3'; // pink-100
-      ctx.fillRect(40, y, 420, 90);
-      ctx.strokeStyle = '#fbcfe8';
-      ctx.strokeRect(40, y, 420, 90);
-
-      ctx.fillStyle = '#831843';
-      ctx.font = 'bold 18px sans-serif';
-      ctx.fillText("CONCEPTO REQUERIDO:", 250, y + 30);
-      ctx.font = 'bold 45px monospace';
-      ctx.fillText(ticketId, 250, y + 70);
-
-      y += 110;
-      // Warning Message
-      ctx.fillStyle = '#ef4444'; // red-500
-      ctx.font = 'bold 14px sans-serif';
-      ctx.textAlign = 'center'; // FORCE CENTER ALIGNMENT
-      wrapText(ctx, "⚠ RECUERDA: Tu pedido NO se preparará hasta recibir el comprobante con el monto EXACTO y este número de concepto.", 250, y, 400, 20);
-
-      downloadCanvas(canvas, `Pago_${ticketId}.png`);
-    };
-
-    const downloadCanvas = (canvas, filename) => {
-      try {
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      } catch (e) { alert("No se pudo descargar la imagen"); }
-    };
-
-    // --- APP COMPONENT ---
-    function App() {
-      const [cart, setCart] = useState([]);
-      const [currentCategory, setCurrentCategory] = useState(null);
-
-      // Check if virtual store is open on initial load
-      const [isStoreOpen, setIsStoreOpen] = useState(isVirtualStoreOpen());
-      const [showScheduleModal, setShowScheduleModal] = useState(false);
-
-      // Periodically check store status every minute
-      useEffect(() => {
-        const checkInterval = setInterval(() => {
-          setIsStoreOpen(isVirtualStoreOpen());
-        }, 60000); // Check every minute
-
-        return () => clearInterval(checkInterval);
-      }, []);
-
-      useEffect(() => {
-        const handleBeforeUnload = (e) => {
-          if (cart.length > 0) {
-            const message = "Se perderá la información. ¿Desea recargar?";
-            e.preventDefault();
-            e.returnValue = message;
-            return message;
-          }
-        };
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-      }, [cart]);
-
-      const [modalState, setModalState] = useState({
-        type: null,
-        data: null
-      });
-
-      const openModal = (type, data = null) => setModalState({ type, data });
-      const closeModal = () => setModalState({ type: null, data: null });
-
-      const addToCart = (item, quantity) => {
-        const items = Array(quantity).fill(item);
-        setCart([...cart, ...items]);
-        // Instead of closeModal, open the "post-add" modal
-        openModal('post_add_feedback');
-      };
-
-      const updateCartItem = (index, newItem) => {
-        const newCart = [...cart];
-        newCart[index] = newItem;
-        setCart(newCart);
-        closeModal();
-      };
-
-      const removeCartItem = (index) => setCart(cart.filter((_, i) => i !== index));
-      const clearCart = () => setCart([]);
-
-      const [orderInfo, setOrderInfo] = useState(null);
-      const cartTotal = cart.reduce((acc, el) => acc + el.totalPrice, 0);
-      const finalTotal = cartTotal;
-
-      const renderProductConfig = () => (
-        <ProductConfigModal
-          product={modalState.data?.product}
-          categoryName={DATA_CATEGORIES.find(c => c.id === modalState.data?.product.categoryId)?.name}
-          initialValues={modalState.data?.initialValues}
-          editIndex={modalState.data?.editIndex}
-          onClose={closeModal}
-          onConfirm={(item, qty) => {
-            if (modalState.data?.editIndex !== undefined) {
-              updateCartItem(modalState.data.editIndex, item);
-            } else {
-              addToCart(item, qty);
-            }
-          }}
-        />
-      );
-
-      return (
-        <div className="min-h-screen bg-slate-900 text-white font-sans overflow-x-hidden selection:bg-pink-500 selection:text-white pb-20">
-          {/* CLOSED MODAL - Shows when store is closed OR manually opened */}
-          {(!isStoreOpen || showScheduleModal) && <ClosedModal onClose={showScheduleModal ? () => setShowScheduleModal(false) : null} />}
-
-          {/* HEADER */}
-          <div className="fixed top-0 left-0 right-0 h-16 bg-slate-800/90 backdrop-blur-md z-40 px-4 flex items-center justify-between border-b border-slate-700 shadow-lg">
-            <h1 className="font-bold text-xl tracking-wider text-pink-500 cursor-pointer" onClick={() => setCurrentCategory(null)}>MENÚ VIRTUAL</h1>
-            <button onClick={() => openModal('cart')} className="bg-pink-600 px-4 py-2 rounded-full font-bold flex items-center gap-2 active:scale-95 transition-all shadow-lg shadow-pink-900/50">
-              <Icons.Cart className="w-5 h-5" /> <span>{cart.length}</span>
-            </button>
-          </div>
-
-          {/* CONTENT */}
-          <div className="pt-20 px-4 max-w-2xl mx-auto">
-            {!currentCategory ? (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom duration-500">
-                <div className="text-center py-8">
-                  <h2 className="text-3xl font-black mb-2">¡Bienvenido!</h2>
-                  <p className="text-slate-400">Selecciona una categoría para empezar tu pedido:</p>
-                </div>
-                <div className="grid grid-cols-1 gap-4">
-                  {DATA_CATEGORIES.map(cat => (
-                    <button key={cat.id} onClick={() => {
-                      const catProducts = DATA_PRODUCTS.filter(p => p.categoryId === cat.id);
-                      if (catProducts.length === 1) {
-                        setCurrentCategory(cat.id);
-                        openModal('product_config', { product: catProducts[0] });
-                      } else {
-                        setCurrentCategory(cat.id);
-                      }
-                    }}
-                      className="bg-slate-800 p-8 rounded-3xl border border-slate-700 hover:border-pink-500 transition-all group relative overflow-hidden active:scale-95">
-                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <span className="text-6xl">{cat.name === 'FRESAS CON CREMA' ? '🍓' : cat.name === 'BEBIDAS' ? '🥤' : '🍔'}</span>
-                      </div>
-                      <span className="text-2xl font-black tracking-widest uppercase relative z-10 group-hover:text-pink-400">{cat.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="animate-in fade-in duration-300">
-                <div className="flex items-center gap-4 mb-6">
-                  <button onClick={() => setCurrentCategory(null)} className="p-2 bg-slate-800 rounded-full text-slate-400 hover:text-white"><Icons.Back /></button>
-                  <h2 className="text-xl font-bold uppercase tracking-widest text-pink-500">{DATA_CATEGORIES.find(c => c.id === currentCategory).name}</h2>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4">
-                  <p className="text-slate-400 text-sm mb-2">Selecciona qué deseas ordenar:</p>
-                  {DATA_PRODUCTS.filter(p => p.categoryId === currentCategory).map(p => (
-                    <div key={p.id} onClick={() => openModal('product_config', { product: p })}
-                      className="bg-slate-800 rounded-2xl p-4 border border-slate-700 active:bg-slate-700/80 transition-all cursor-pointer shadow-md flex justify-between items-center group relative overflow-hidden">
-                      <div>
-                        <h3 className="font-bold text-xl mb-1 group-hover:text-pink-400 transition-colors uppercase">{p.name}</h3>
-                        <p className="text-slate-400 text-sm">{(p.variants || []).length} Opciones</p>
-                      </div>
-                      <button className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-pink-500 group-hover:scale-110 transition-all border border-slate-600">
-                        <span className="text-2xl font-light pb-1">+</span>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-3">
-              <a href="https://maps.app.goo.gl/BWJjWYbNft93Ei4s8" target="_blank" className="flex items-center gap-2 bg-slate-800 border border-slate-600 px-6 py-3 rounded-full shadow-xl active:scale-95 transition-all text-slate-300 font-bold hover:text-white hover:border-slate-500">
-                <Icons.Location className="w-5 h-5 text-pink-500" /> Ver Ubicación
-              </a>
-              <button onClick={() => setShowScheduleModal(true)} className="flex items-center gap-2 bg-slate-800 border border-slate-600 px-6 py-3 rounded-full shadow-xl active:scale-95 transition-all text-slate-300 font-bold hover:text-white hover:border-slate-500">
-                <Icons.Clock className="w-5 h-5 text-purple-500" /> Horarios
-              </button>
-            </div>
-          </div>
-
-          {/* MODALS */}
-          {modalState.type === 'product_config' && renderProductConfig()}
-
-          {modalState.type === 'cart' && (
-            <div className="fixed inset-0 z-50 bg-slate-900 flex flex-col animate-in fade-in zoom-in duration-200">
-              <div className="p-4 flex justify-between items-center border-b border-slate-800 bg-slate-800">
-                <button onClick={closeModal} className="text-slate-400 hover:text-white p-2"><Icons.Back className="w-6 h-6" /></button>
-                <span className="font-bold text-lg">TU PEDIDO ({cart.length})</span>
-                <div className="w-10" />
-              </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {cart.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-slate-500 opacity-50"><Icons.Cart className="w-16 h-16 mb-4" /><p>Tu carrito está vacío</p></div>
-                ) : (
-                  cart.map((item, idx) => (
-                    <div key={idx} className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col gap-2">
-                      <div className="text-[10px] font-bold text-pink-500 uppercase tracking-wider">{item.categoryName}</div>
-                      <div className="flex justify-between items-start">
-                        <div><div className="font-bold text-lg text-white">{item.productName}</div><div className="text-slate-400 text-sm">{item.variantName}</div></div>
-                        <div className="font-bold text-xl">${item.totalPrice.toFixed(2)}</div>
-                      </div>
-                      {item.elementConfig && <div className="text-xs text-slate-400 bg-slate-900/50 p-2 rounded border border-slate-800">
-                        {Object.keys(item.selections || {}).map(gid => {
-                          const grp = item.elementConfig.find(g => g.id === gid);
-                          const sels = item.selections[gid];
-                          if (!sels?.length) return null;
-                          return <div key={gid}><span className="font-semibold text-slate-300">{grp.name}:</span> {sels.map(s => s.name).join(', ')}</div>
-                        })}
-                      </div>}
-                      <div className="flex justify-end gap-3 mt-1">
-                        <button onClick={() => openModal('product_config', { product: DATA_PRODUCTS.find(p => p.id === item.productId), initialValues: item, editIndex: idx })} className="text-blue-400 text-sm flex gap-1 items-center px-2 py-1 hover:bg-slate-700 rounded"><Icons.Edit className="w-4 h-4" /> Editar</button>
-                        <button onClick={() => removeCartItem(idx)} className="text-red-400 text-sm flex gap-1 items-center px-2 py-1 hover:bg-slate-700 rounded"><Icons.Trash className="w-4 h-4" /> Borrar</button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-              {cart.length > 0 && (
-                <div className="p-4 border-t border-slate-800 bg-slate-800 space-y-3">
-                  <div className="flex justify-between text-2xl font-black px-2"><span>Total</span><span>${cartTotal.toFixed(2)}</span></div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button onClick={clearCart} className="bg-red-500/10 text-red-500 border border-red-500/50 py-3 rounded-xl font-bold">Vaciar</button>
-                    <button onClick={() => {
-                      const id = Math.floor(100000 + Math.random() * 900000);
-                      const finalInfo = { ticketId: id };
-                      setOrderInfo(finalInfo);
-                      openModal('ticket_result', { orderInfo: finalInfo });
-                    }} className="bg-emerald-600 text-white py-3 rounded-xl font-bold">Proceder</button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {modalState.type === 'ticket_result' && orderInfo && (
-            <TicketResultModal orderInfo={orderInfo} items={cart} total={finalTotal}
-              onClose={() => { if (confirm("¿Salir? Se perderá el pedido.")) { setCart([]); setOrderInfo(null); closeModal(); } }}
-            />
-          )}
-
-          {modalState.type === 'post_add_feedback' && (
-            <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur flex items-center justify-center p-6 animate-in fade-in zoom-in duration-200">
-              <div className="w-full max-w-sm bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-2xl">
-                <div className="p-8 text-center space-y-6">
-                  <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto">
-                    <Icons.Check className="w-10 h-10 text-emerald-500" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-black text-white mb-2">¡Agregado con éxito!</h3>
-                    <p className="text-slate-400">¿Qué te gustaría hacer ahora?</p>
-                  </div>
-                  <div className="space-y-3">
-                    <button onClick={() => { setCurrentCategory(null); closeModal(); }}
-                      className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-4 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2">
-                      <span className="text-xl">+</span> Ordenar algo más
-                    </button>
-                    <button onClick={() => openModal('cart')}
-                      className="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-pink-900/40 transition-all active:scale-95 flex items-center justify-center gap-2">
-                      <Icons.Cart className="w-5 h-5" /> Ver mi Pedido
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-        </div>
-      );
-    }
-
-    // --- SUBCOMPONENTS (REFINED) ---
-
-    function ProductConfigModal({ product, categoryName, initialValues, editIndex, onClose, onConfirm }) {
-      const [variant, setVariant] = useState(initialValues ? (product.variants?.find(v => v.id === initialValues.variantId) || null) : (product.variants?.length === 1 ? product.variants[0] : null));
-      const [selections, setSelections] = useState(initialValues ? initialValues.selections : {});
-      const [qty, setQty] = useState(1);
-
-      // Wizard logic: step -1 = variant selection, step 0...N = element groups
-      const [step, setStep] = useState((variant || !product.variants || product.variants.length === 0) ? 0 : -1);
-
-      const elements = product.elements || [];
-      const currentElement = elements[step];
-
-      const toggleItem = (elementId, item, maxQty, allowRepeat, type) => {
-        if (type === 'radio') {
-          setSelections({ ...selections, [elementId]: [item] });
-          handleNext();
-          return;
-        }
-
-        const current = selections[elementId] || [];
-        const totalSelected = current.length;
-        const countOfItem = current.filter(i => i.id === item.id).length;
-
-        if (allowRepeat) {
-          if (totalSelected < maxQty) {
-            setSelections({ ...selections, [elementId]: [...current, item] });
-          } else if (countOfItem > 0) {
-            const idx = current.findIndex(i => i.id === item.id);
-            const newArr = [...current];
-            newArr.splice(idx, 1);
-            setSelections({ ...selections, [elementId]: newArr });
-          }
-        } else {
-          if (countOfItem > 0) {
-            setSelections({ ...selections, [elementId]: current.filter(i => i.id !== item.id) });
-          } else {
-            if (totalSelected < maxQty) {
-              if (maxQty === 1 && totalSelected === 1) {
-                setSelections({ ...selections, [elementId]: [item] });
-              } else {
-                setSelections({ ...selections, [elementId]: [...current, item] });
-              }
-            }
-          }
-        }
-      };
-
-      const setNone = (elementId) => {
-        setSelections({ ...selections, [elementId]: [] });
-        handleNext();
-      };
-
-      const handleNext = () => {
-        if (step < elements.length - 1) {
-          setStep(step + 1);
-        } else {
-          setStep(999);
-        }
-      };
-
-      const handleBack = () => {
-        if (step > 0) {
-          setStep(step - 1);
-        } else if (step === 0 && (product.variants || []).length > 1) {
-          setStep(-1);
-        } else {
-          onClose();
-        }
-      };
-
-      const selectVariant = (v) => {
-        setVariant(v);
-        if (elements.length > 0) {
-          setStep(0);
-        } else {
-          setStep(999);
-        }
-      };
-
-      const calculateTotal = () => {
-        let t = 0;
-        if (variant) t += variant.price;
-        // Add prices from all selections (including radio buttons in elements)
-        Object.values(selections).flat().forEach(i => t += (i.price || 0));
-        return t;
-      };
-
-      const handleConfirm = () => {
-        const itemData = {
-          productId: product.id, productName: product.name, categoryName,
-          variantId: variant ? variant.id : null, variantName: variant ? variant.name : null,
-          selections, elementConfig: product.elements, totalPrice: calculateTotal()
-        };
-        onConfirm(itemData, qty);
-      };
-
-      const isFinished = step === 999;
-      // Dynamic questions based on product and step
-      let stepTitle = `Selecciona ${currentElement?.name}`;
-
-      let helperTitle = '¡Hola!';
-      let helperText = 'Elige lo que más te guste.';
-
-      if (step === -1) {
-        helperTitle = '¡Empecemos!';
-        helperText = 'Selecciona la variante que más te guste.';
-      } else if (currentElement) {
-        if (product.id === 1 || product.id === 7 || product.id === 8 || product.id === 11) {
-          // Fresas con Crema, Crepas Dulces, Pastel Tortuga, Tostitos
-          if (currentElement.id === 'size') {
-            helperTitle = '¡Hora de elegir!';
-            helperText = 'Ahora selecciona el tamaño deseado.';
-          } else if (currentElement.id === 'variant' || currentElement.id === 'presentacion') {
-            helperTitle = '¡Dale sabor!';
-            helperText = 'Selecciona la variante que más te guste.';
-          } else if (currentElement.id === 'bases') {
-            helperTitle = 'Base deliciosa';
-            helperText = `Prepárala con las bases disponibles, elige ${currentElement.max} máximo.`;
-          } else if (currentElement.id === 'toppings' || currentElement.id === 'fruta') {
-            helperTitle = '¡Un toque especial!';
-            helperText = `Selecciona ${currentElement.max} máximo${currentElement.allowRepeat ? ', puedes repetir' : ''}.`;
-          } else if (currentElement.id === 'jarabes') {
-            helperTitle = '¡El final perfecto!';
-            helperText = `Selecciona máximo ${currentElement.max} jarabe.`;
-          } else {
-            helperTitle = `¡Elige ${currentElement.name}!`;
-            helperText = currentElement.type !== 'radio' ? `Puedes elegir máximo ${currentElement.max} ${currentElement.allowRepeat ? 'opciones (puedes repetir)' : 'opciones'}.` : 'Selecciona una opción.';
-          }
-        } else if (product.categoryId === 4) { // Bebidas
-          if (currentElement.id === 'leche') {
-            helperTitle = 'Tipo de Leche';
-            helperText = 'Selecciona tu tipo de leche favorita.';
-          } else {
-            helperTitle = `¡Elige ${currentElement.name}!`;
-            helperText = 'Selecciona una opción.';
-          }
-        } else {
-          helperTitle = `¡Elige ${currentElement.name}!`;
-          helperText = currentElement.type !== 'radio' ? `Puedes elegir máximo ${currentElement.max} ${currentElement.allowRepeat ? 'opcionalmente repetidos' : 'opciones'}.` : 'Selecciona una opción.';
-        }
-      }
-
-      return (
-        <div className="fixed inset-0 z-50 bg-slate-900 flex flex-col animate-in slide-in-from-bottom duration-300">
-          <div className="h-16 bg-slate-800 flex items-center justify-between px-4 border-b border-slate-700">
-            <button onClick={handleBack} className="text-slate-400 p-2"><Icons.Back /></button>
-            <div className="text-center">
-              <span className="text-xs font-bold text-pink-500 uppercase block leading-tight">{product.name}</span>
-              <span className="text-[10px] text-slate-500 uppercase tracking-widest">{isFinished ? 'Resumen' : (step === -1 ? 'Selecciona' : `Paso ${step + 1} de ${elements.length}`)}</span>
-            </div>
-            <button onClick={onClose} className="text-slate-400 p-2"><Icons.Close /></button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-5 scrollbar-hide">
-
-            {/* INLINE HELPER BANNER */}
-            {!isFinished && (
-              <div className="bg-slate-800 border border-pink-500/30 rounded-2xl p-4 mb-6 flex items-start gap-4 shadow-lg animate-in slide-in-from-top duration-300">
-                <div className="text-4xl animate-bounce">🙋‍♀️</div>
-                <div className="flex-1">
-                  <h4 className="font-black text-pink-400 text-lg leading-tight mb-1">{helperTitle}</h4>
-                  <p className="text-sm text-slate-300 font-medium leading-snug">{helperText}</p>
-                </div>
-              </div>
-            )}
-
-            {step === -1 && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-right duration-300">
-                <div className="grid grid-cols-1 gap-3">
-                  {product.variants.map(v => (
-                    <button key={v.id} onClick={() => selectVariant(v)}
-                      className="group bg-slate-800 border-2 border-slate-700 p-5 rounded-2xl flex justify-between items-center hover:border-pink-500 transition-all active:scale-95">
-                      <div className="text-left">
-                        <div className="font-bold text-lg group-hover:text-pink-400 transition-colors uppercase">{v.name}</div>
-                        <div className="text-slate-400 text-sm">Listo en unos minutos</div>
-                      </div>
-                      <div className="text-xl font-black text-white">${v.price}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {step >= 0 && step < elements.length && (
-              <div key={step} className="space-y-4 animate-in fade-in slide-in-from-right duration-300 relative">
-                <div className="text-center mb-2">
-                  <h3 className="text-2xl font-black uppercase tracking-tight text-white/90">{stepTitle}</h3>
-                </div>
-
-                <div className="grid grid-cols-1 gap-2">
-                  {currentElement.type !== 'radio' && (
-                    <button onClick={() => setNone(currentElement.id)}
-                      className={`flex justify-between items-center p-4 rounded-xl border-2 transition-all ${(!selections[currentElement.id] || selections[currentElement.id].length === 0) ? 'bg-slate-700 border-slate-500' : 'bg-slate-800 border-slate-700 opacity-60'}`}>
-                      <span className="font-bold">NINGUNO / SIN ESTO</span>
-                      <Icons.Close className="w-4 h-4" />
-                    </button>
-                  )}
-
-                  {currentElement.items.map(item => {
-                    const count = (selections[currentElement.id] || []).filter(s => s.id === item.id).length;
-                    const isSelected = count > 0;
-
-                    // Cumulative pricing logic for Fresas (1)
-                    const isCumulativeProduct = product.id === 1;
-                    const isStep0 = step === 0;
-                    const isStep1 = step === 1;
-
-                    let displayPrice = item.price;
-                    let showPrice = item.price > 0;
-
-                    if (isCumulativeProduct) {
-                      if (isStep0) {
-                        showPrice = false; // Hide price in first step
-                      } else if (isStep1) {
-                        const baseStepId = elements[0].id;
-                        const baseItem = selections[baseStepId]?.[0];
-                        const basePrice = baseItem?.price || 0;
-                        displayPrice = basePrice + item.price;
-                        showPrice = true;
-                      }
-                    }
-
-                    return (
-                      <button key={item.id} onClick={() => toggleItem(currentElement.id, item, currentElement.max, currentElement.allowRepeat, currentElement.type)}
-                        className={`flex justify-between items-center p-4 rounded-xl border-2 transition-all active:scale-[0.98] ${isSelected ? 'bg-slate-700 border-pink-500 ring-2 ring-pink-500/20' : 'bg-slate-800 border-slate-700 text-slate-400'}`}>
-                        <div className="text-left">
-                          <span className="font-bold text-white uppercase block">{item.name} {count > 1 ? `x${count}` : ''}</span>
-                          {showPrice && <span className="text-xs text-pink-400">{isCumulativeProduct && isStep1 ? '' : '+ '}${displayPrice}</span>}
-                        </div>
-                        {isSelected && <div className="bg-pink-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs animate-in zoom-in duration-200">✓</div>}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {isFinished && (
-              <div className="space-y-6 animate-in fade-in zoom-in duration-300">
-                <div className="text-center py-4">
-                  <div className="text-6xl mb-4">😋</div>
-                  <h3 className="text-2xl font-black">¡Todo listo!</h3>
-                  <p className="text-slate-400">Revisa tu personalización:</p>
-                </div>
-
-                <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 divide-y divide-slate-700 space-y-4">
-                  {variant && (
-                    <div className="pt-0 pb-3 flex justify-between">
-                      <span className="text-slate-400">Variante:</span>
-                      <span className="font-bold text-white uppercase text-right">{variant.name}</span>
-                    </div>
-                  )}
-                  {elements.map(el => {
-                    const sels = selections[el.id] || [];
-                    return (
-                      <div key={el.id} className="py-3 flex justify-between gap-4">
-                        <span className="text-slate-400">{el.name}:</span>
-                        <span className="font-medium text-white text-right">{sels.length > 0 ? sels.map(s => s.name).join(', ') : 'Ninguno'}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {!initialValues && (
-                  <div className="flex flex-col items-center gap-2">
-                    <span className="text-xs font-bold text-slate-500 uppercase">Cantidad</span>
-                    <div className="flex items-center bg-slate-800 rounded-2xl p-2 border border-slate-700 scale-110">
-                      <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-12 h-12 text-slate-400 text-2xl">-</button>
-                      <span className="w-12 text-center font-black text-white text-xl">{qty}</span>
-                      <button onClick={() => setQty(q => q + 1)} className="w-12 h-12 text-white text-2xl">+</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="bg-slate-800 p-4 border-t border-slate-700 flex gap-4 items-center">
-            {step >= 0 && step < elements.length ? (
-              currentElement.type === 'radio' ? null : (
-                <button onClick={handleNext}
-                  className="flex-1 bg-white text-slate-900 font-black py-4 rounded-2xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2">
-                  CONTINUAR <Icons.Back className="rotate-180 w-4 h-4" />
-                </button>
-              )
-            ) : isFinished ? (
-              <button onClick={handleConfirm}
-                className="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 animate-pulse-slow text-white font-black py-4 rounded-2xl shadow-xl shadow-pink-900/50 transition-all active:scale-95 flex justify-between px-8">
-                <span>AGREGAR AL CARRITO</span>
-                <span>${(calculateTotal() * qty).toFixed(2)}</span>
-              </button>
-            ) : null}
-          </div>
-
-          <style>{`
-              @keyframes pulse-slow {
-                0%, 100% { transform: scale(1); filter: brightness(1); }
-                50% { transform: scale(1.02); filter: brightness(1.1); }
-              }
-              .animate-pulse-slow {
-                animation: pulse-slow 2s infinite ease-in-out;
-              }
-            `}</style>
-        </div>
-      );
-    }
-
-    function TicketResultModal({ orderInfo, items, total, onClose }) {
-      const ticketDataUrl = useMemo(() => generateTicketImage(items, orderInfo, total), [items, orderInfo, total]);
-
-      return (
-        <div className="fixed inset-0 z-[70] bg-slate-900 flex flex-col animate-in fade-in duration-500">
-
-          {/* Full Screen Ticket Viewer */}
-          <div className="flex-1 overflow-y-auto flex justify-center items-start pt-6 pb-48 scrollbar-hide px-2">
-            <img src={ticketDataUrl} alt="Ticket Preview" className="w-full max-w-sm rounded-none shadow-2xl" style={{ objectFit: 'contain' }} />
-          </div>
-
-          {/* Floating Action Bar */}
-          <div className="fixed bottom-0 left-0 right-0 bg-slate-800/95 backdrop-blur-md rounded-t-3xl border-t border-slate-700 p-5 shadow-[0_-10px_40px_rgba(0,0,0,0.6)] z-10 animate-in slide-in-from-bottom duration-500">
-            <div className="max-w-md mx-auto">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="text-4xl">🎟️</div>
-                <div>
-                  <h3 className="font-black text-xl text-white mb-1">¡Resumen Listo!</h3>
-                  <p className="text-sm font-bold text-slate-300 leading-snug">
-                    Muestra tu ticket en caja o díctaselo a quien te atienda para que preparen tu pedido.
-                  </p>
-                  <p className="text-xs text-slate-500 italic mt-1 pb-1">La app es solo una guía visual.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button onClick={() => {
-                  const link = document.createElement('a');
-                  link.download = `Ticket_${orderInfo.ticketId}.png`;
-                  link.href = ticketDataUrl;
-                  link.click();
-                }} className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-95 text-sm flex items-center justify-center gap-2">
-                  <Icons.Download className="w-5 h-5" /> Descargar
-                </button>
-
-                <button onClick={onClose} className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-95 text-sm flex items-center justify-center gap-2">
-                  ¡Listo! Inicio
-                </button>
-              </div>
-
-              <div className="mt-4 text-center">
-                <div className="font-mono text-2xl text-yellow-500 font-bold tracking-widest">#{orderInfo.ticketId}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    }
-
-    const { createRoot } = ReactDOM;
-    createRoot(document.getElementById('root')).render(<App />);
-  </script>
+      html += '<div class="opt '+sel+'" onclick="selectVariant('+vi+')">'+
+        '<div class="radio"></div>'+
+        '<div class="opt-name">'+esc(v.name)+'</div>'+
+        (priceTxt?'<div class="opt-price">'+priceTxt+'</div>':'')+
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  /* Grupos */
+  sc.groups.forEach((g, gi) => {
+    html += '<div class="sect"><div class="sect-ttl">'+(g.emoji?esc(g.emoji)+' ':'')+esc(g.name)+
+      '<span class="progress" id="prog-g'+gi+'">0/'+g.max+(g.min>0?' · mín '+g.min:'')+'</span></div>';
+    g.items.forEach((it, ii) => {
+      const q = (currentSc.groups[gi]||{})[ii] || 0;
+      html += '<div class="opt qty-row">'+
+        '<div class="opt-name">'+esc(it.name)+'</div>'+
+        '<div class="qty-step">'+
+          '<button onclick="changeGroupQty('+gi+','+ii+',-1)">−</button>'+
+          '<span id="gq-'+gi+'-'+ii+'">'+q+'</span>'+
+          '<button onclick="changeGroupQty('+gi+','+ii+',1)">+</button>'+
+        '</div>'+
+      '</div>';
+    });
+    html += '</div>';
+  });
+
+  /* Extras */
+  sc.extras.forEach((g, gi) => {
+    const ppu = g.pricePerUnit || 0;
+    html += '<div class="sect"><div class="sect-ttl">★ '+(g.emoji?esc(g.emoji)+' ':'')+esc(g.name)+
+      (ppu>0?' · +'+money(ppu)+' c/u':'')+
+      '</div>';
+    g.items.forEach((it, ii) => {
+      const q = (currentSc.extras[gi]||{})[ii] || 0;
+      html += '<div class="opt qty-row">'+
+        '<div class="opt-name">'+esc(it.name)+'</div>'+
+        '<div class="qty-step">'+
+          '<button onclick="changeExtraQty('+gi+','+ii+',-1)">−</button>'+
+          '<span id="eq-'+gi+'-'+ii+'">'+q+'</span>'+
+          '<button onclick="changeExtraQty('+gi+','+ii+',1)">+</button>'+
+        '</div>'+
+      '</div>';
+    });
+    html += '</div>';
+  });
+
+  if (!html) html = '<div class="empty">Sin opciones adicionales</div>';
+  body.innerHTML = html;
+}
+
+function selectVariant(vi){
+  currentSc.variantIdx = vi;
+  renderProductBody();
+  updateProductTotal();
+}
+
+function changeGroupQty(gi, ii, delta){
+  const sc = DATA.categories[currentSc.catIdx].subcategories[currentSc.scIdx];
+  const g = sc.groups[gi];
+  if (!currentSc.groups[gi]) currentSc.groups[gi] = {};
+  const cur = currentSc.groups[gi][ii] || 0;
+  let total = 0; Object.values(currentSc.groups[gi]).forEach(q => total += q);
+  if (delta > 0 && total >= g.max) return;
+  const next = Math.max(0, cur + delta);
+  if (next === 0) delete currentSc.groups[gi][ii];
+  else currentSc.groups[gi][ii] = next;
+  document.getElementById('gq-'+gi+'-'+ii).textContent = next;
+  /* Actualizar progress */
+  total = 0; Object.values(currentSc.groups[gi]||{}).forEach(q => total += q);
+  const prog = document.getElementById('prog-g'+gi);
+  if (prog){
+    if (total === 0) prog.className = 'progress', prog.textContent = '0/'+g.max+(g.min>0?' · mín '+g.min:'');
+    else if (total >= g.min) prog.className = 'progress ok', prog.textContent = total+'/'+g.max+' ✓';
+    else prog.className = 'progress warn', prog.textContent = total+'/'+g.max+' · mín '+g.min;
+  }
+  updateProductTotal();
+}
+
+function changeExtraQty(gi, ii, delta){
+  const sc = DATA.categories[currentSc.catIdx].subcategories[currentSc.scIdx];
+  const g = sc.extras[gi];
+  if (!currentSc.extras[gi]) currentSc.extras[gi] = {};
+  const cur = currentSc.extras[gi][ii] || 0;
+  let total = 0; Object.values(currentSc.extras[gi]).forEach(q => total += q);
+  if (delta > 0 && g.max && total >= g.max) return;
+  const next = Math.max(0, cur + delta);
+  if (next === 0) delete currentSc.extras[gi][ii];
+  else currentSc.extras[gi][ii] = next;
+  document.getElementById('eq-'+gi+'-'+ii).textContent = next;
+  updateProductTotal();
+}
+
+function changeProdQty(delta){
+  currentSc.qty = Math.max(1, (currentSc.qty||1) + delta);
+  document.getElementById('prod-qty').textContent = currentSc.qty;
+  updateProductTotal();
+}
+
+function computeUnitPrice(){
+  const sc = DATA.categories[currentSc.catIdx].subcategories[currentSc.scIdx];
+  const base = sc.price || 0;
+  const v = currentSc.variantIdx >= 0 ? sc.variants[currentSc.variantIdx] : null;
+  const varP = v ? (v.priceAdd || 0) : 0;
+  let extP = 0;
+  Object.entries(currentSc.extras||{}).forEach(([gi, items]) => {
+    const g = sc.extras[gi];
+    const ppu = g.pricePerUnit || 0;
+    Object.values(items).forEach(q => extP += ppu * q);
+  });
+  return base + varP + extP;
+}
+
+function updateProductTotal(){
+  const unit = computeUnitPrice();
+  const total = unit * (currentSc.qty || 1);
+  document.getElementById('prod-total').textContent = money(total);
+}
+
+function addCurrentToCart(){
+  const sc = DATA.categories[currentSc.catIdx].subcategories[currentSc.scIdx];
+  const c = DATA.categories[currentSc.catIdx];
+  /* Validar variante */
+  if (sc.variants.length && currentSc.variantIdx < 0){
+    alert('Selecciona una variante');
+    return;
+  }
+  /* Validar grupos min/max */
+  for (let gi=0; gi<sc.groups.length; gi++){
+    const g = sc.groups[gi];
+    let total = 0;
+    Object.values(currentSc.groups[gi]||{}).forEach(q => total += q);
+    if (g.min && total < g.min){ alert('Debes seleccionar al menos '+g.min+' de "'+g.name+'"'); return; }
+    if (g.max && total > g.max){ alert('Máximo '+g.max+' de "'+g.name+'"'); return; }
+  }
+  const variant = currentSc.variantIdx >= 0 ? sc.variants[currentSc.variantIdx] : null;
+  const groups = [];
+  Object.entries(currentSc.groups).forEach(([gi, items]) => {
+    const g = sc.groups[gi];
+    const arr = [];
+    Object.entries(items).forEach(([ii, qty]) => arr.push({ name: g.items[ii].name, qty }));
+    if (arr.length) groups.push({ groupName: g.name, items: arr });
+  });
+  const extras = [];
+  Object.entries(currentSc.extras).forEach(([gi, items]) => {
+    const g = sc.extras[gi];
+    const arr = [];
+    Object.entries(items).forEach(([ii, qty]) => arr.push({ name: g.items[ii].name, qty }));
+    if (arr.length) extras.push({ groupName: g.name, items: arr });
+  });
+  cart.push({
+    catName: c.name,
+    scName: sc.name,
+    varName: variant ? variant.name : null,
+    groups, extras,
+    qty: currentSc.qty || 1,
+    unitPrice: computeUnitPrice()
+  });
+  closeModal('modal-product');
+  updateCartFab();
+}
+
+/* ─── Carrito ──────────────────────────── */
+function updateCartFab(){
+  const fab = document.getElementById('cart-fab');
+  const badge = document.getElementById('cart-badge');
+  if (cart.length){
+    fab.style.display = 'flex';
+    badge.textContent = cart.reduce((s,c)=>s+c.qty,0);
+  } else {
+    fab.style.display = 'none';
+  }
+}
+function openCart(){
+  if (!cart.length) return;
+  renderCart();
+  document.getElementById('modal-cart').classList.add('open');
+}
+function renderCart(){
+  const body = document.getElementById('modal-cart-body');
+  let total = 0;
+  let html = cart.map((c,i) => {
+    const sub = c.unitPrice * c.qty;
+    total += sub;
+    let det = '';
+    if (c.varName) det += '· '+esc(c.varName);
+    c.groups.forEach(g => det += '<div>+ '+esc(g.groupName)+': '+g.items.map(it=>esc(it.name)+'×'+it.qty).join(', ')+'</div>');
+    c.extras.forEach(g => det += '<div>★ '+esc(g.groupName)+': '+g.items.map(it=>esc(it.name)+'×'+it.qty).join(', ')+'</div>');
+    return '<div class="cart-item"><div class="cart-item-hdr"><div class="cart-item-name">'+esc(c.catName)+' · '+esc(c.scName)+'</div>'+
+      '<div class="qty-step"><button onclick="changeCartQty('+i+',-1)">−</button><span>'+c.qty+'</span><button onclick="changeCartQty('+i+',1)">+</button></div>'+
+      '<button class="cart-item-del" onclick="removeCartItem('+i+')">🗑</button></div>'+
+      '<div class="cart-item-detail">'+det+'</div>'+
+      '<div style="text-align:right;font-weight:700;color:var(--acc);margin-top:4px;font-family:ui-monospace,Menlo,Consolas,monospace">'+money(sub)+'</div></div>';
+  }).join('');
+  html += '<div class="totals"><span>Total estimado</span><span>'+money(total)+'</span></div>';
+  body.innerHTML = html;
+}
+function changeCartQty(i, delta){
+  cart[i].qty = Math.max(1, cart[i].qty + delta);
+  renderCart(); updateCartFab();
+}
+function removeCartItem(i){
+  cart.splice(i,1);
+  renderCart(); updateCartFab();
+  if (!cart.length) closeModal('modal-cart');
+}
+
+function generateQR(){
+  if (!cart.length) return;
+  const payload = { items: cart.map(c => ({
+    catName: c.catName, scName: c.scName, varName: c.varName,
+    groups: c.groups, extras: c.extras, qty: c.qty
+  })) };
+  const json = JSON.stringify(payload);
+  const b64 = btoa(unescape(encodeURIComponent(json)));
+  const text = 'MN1|' + b64;
+  const qr = qrcode(0, 'L');
+  qr.addData(text);
+  qr.make();
+  const img = qr.createImgTag(5, 8);
+  document.getElementById('modal-qr-body').innerHTML = img +
+    '<div style="font-size:13px;color:var(--t3);margin-top:6px">Muestra este código al personal para registrar tu pedido</div>';
+  closeModal('modal-cart');
+  document.getElementById('modal-qr').classList.add('open');
+}
+
+function buildWhatsappText(){
+  let total = 0;
+  const lines = [];
+  cart.forEach(c => {
+    const cat = DATA.categories.find(cat => cat.name === c.catName);
+    const emoji = (cat && cat.emoji) ? cat.emoji : '';
+    const sub = c.unitPrice * c.qty;
+    total += sub;
+    const qtyStr = c.qty > 1 ? ' ×' + c.qty : '';
+    lines.push('*' + emoji + c.catName + ' · ' + c.scName + qtyStr + '*');
+    if (c.varName) lines.push('· ' + c.varName);
+    c.groups.forEach(g => {
+      const items = g.items.map(it => it.qty > 1 ? it.name + '×' + it.qty : it.name).join(', ');
+      lines.push('_+ ' + g.groupName + ': ' + items + '_');
+    });
+    c.extras.forEach(g => {
+      const items = g.items.map(it => it.qty > 1 ? it.name + '×' + it.qty : it.name).join(', ');
+      lines.push('_★ ' + g.groupName + ': ' + items + '_');
+    });
+    lines.push('');
+  });
+  lines.push('*TOTAL: ' + money(total) + '*');
+  return lines.join('\n');
+}
+
+function shareWhatsapp(){
+  const text = buildWhatsappText();
+  const phone = '528111200176'; /* Número de prueba: +52 81 1234 5678 */
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(function(){});
+  }
+  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank');
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+/* Cerrar modal con clic fuera */
+document.querySelectorAll('.modal').forEach(m => {
+  m.addEventListener('click', e => {
+    if (e.target === m && m.id !== 'closed-mask') closeModal(m.id);
+  });
+});
+
+/* Init */
+renderGrid();
+renderActionRow();
+applyScheduleStatus();
+setInterval(applyScheduleStatus, 60000);
+</script>
 </body>
-
 </html>
