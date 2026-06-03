@@ -726,7 +726,7 @@ function buildWhatsappText(){
 
 function shareWhatsapp(){
   const text = buildWhatsappText();
-  const phone = '52811200176'; /* Número de prueba: +52 81 1234 5678 */
+  const phone = '528111200176'; /* Número de prueba: +52 81 1234 5678 */
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).catch(function(){});
   }
