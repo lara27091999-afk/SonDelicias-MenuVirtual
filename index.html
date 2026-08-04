@@ -8,7 +8,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --acc:#22c55e;
+  --acc:#eab308;
   --bg:#f4f4f6; --bg2:#fff;
   --card:#fff;
   --t1:#0e0e10; --t2:#3a3a3e; --t3:#8a8a90;
@@ -109,6 +109,11 @@ html,body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sa
 .btn-add[disabled]{opacity:.45;cursor:not-allowed}
 
 /* ── Carrito ──────────────────────────────── */
+.cart-note{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--red);
+  border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.5}
+.cart-note b{color:var(--t1)}
+.cart-note button{background:none;border:none;color:var(--acc);font-size:12px;font-weight:700;
+  cursor:pointer;padding:0;text-decoration:underline}
 .cart-item{padding:10px 0;border-bottom:1px solid var(--border)}
 .cart-item:last-child{border-bottom:none}
 .cart-item-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
@@ -124,12 +129,16 @@ html,body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sa
 
 /* ── QR ──────────────────────────────────── */
 .qr-box{padding:24px;text-align:center}
-.qr-box img, .qr-box canvas{display:block;margin:0 auto 14px;max-width:280px;width:100%;height:auto;background:#fff;padding:8px;border-radius:8px}
+.qr-box img, .qr-box canvas{display:block;margin:0 auto 14px;max-width:min(92vw,460px);width:100%;height:auto;background:#fff;padding:10px;border-radius:8px;image-rendering:pixelated}
 
-/* ── Botón WhatsApp ──────────────────────── */
+/* ── Botones del carrito ─────────────────── */
 .btn-wa{background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-wa:active{opacity:.85}
 .btn-wa img{width:20px;height:20px;object-fit:contain;flex-shrink:0}
+.btn-qr{background:var(--t1);color:var(--bg2);display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-qr:active{opacity:.85}
+.cart-actions{display:flex;gap:8px;width:100%}
+.cart-actions .btn{flex:1;padding:11px 8px;font-size:13px;white-space:nowrap}
 
 /* ── Horario modal ───────────────────────── */
 .sch-table{width:100%;border-collapse:collapse;font-size:13px}
@@ -214,9 +223,12 @@ html,body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sa
       <button class="modal-x" onclick="closeModal('modal-cart')">✕</button>
     </div>
     <div class="modal-body" id="modal-cart-body"></div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal('modal-cart')">Seguir</button>
-      <button class="btn btn-wa" style="flex:1" onclick="shareWhatsapp()">Enviar por WhatsApp</button>
+    <div class="modal-foot" style="flex-direction:column;gap:8px">
+      <div class="cart-actions">
+        <button class="btn btn-qr" onclick="generateQR()">📱 QR para la tienda</button>
+        <button class="btn btn-wa" id="btn-wa" onclick="shareWhatsapp()">WhatsApp</button>
+      </div>
+      <button class="btn btn-ghost btn-block" onclick="closeModal('modal-cart')">Seguir pidiendo</button>
     </div>
   </div>
 </div>
@@ -252,7 +264,7 @@ html,body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sa
 </div>
 
 <script>
-const DATA = {"businessName":"SON D'ELICIAS","emoji":"🍓","accentColor":"#22c55e","priceMode":"combined","mapsUrl":"https://maps.app.goo.gl/JaL4YjMcN8P3yiH98","socialUrls":[],"schedulePhysical":{"0":{"closed":false,"open":"17:00","close":"21:30"},"1":{"open":"17:00","close":"21:30","closed":false},"2":{"open":"17:00","close":"22:30","closed":false},"3":{"open":"17:00","close":"21:30","closed":false},"4":{"open":"17:00","close":"21:30","closed":false},"5":{"open":"05:00","close":"22:30","closed":false},"6":{"open":"09:00","close":"21:00","closed":true}},"scheduleOnline":{"0":{"closed":false,"open":"17:00","close":"21:30"},"1":{"open":"17:00","close":"21:30","closed":false},"2":{"open":"17:00","close":"21:30","closed":false},"3":{"open":"17:00","close":"21:30","closed":false},"4":{"open":"17:00","close":"21:30","closed":false},"5":{"open":"17:00","close":"21:30","closed":false},"6":{"open":"10:00","close":"20:00","closed":true}},"categories":[{"name":"Fresas con crema","emoji":"🍓","subcategories":[{"name":"Chico","emoji":"🍓","price":60,"variants":[{"name":"NORMALES","priceAdd":0},{"name":"PINGÜINO","priceAdd":10},{"name":"GANSITO","priceAdd":10},{"name":"CHOCORROL","priceAdd":10},{"name":"BUBULUBU","priceAdd":10},{"name":"KINDER BUENO","priceAdd":15},{"name":"PALETA PAYASO","priceAdd":15},{"name":"PAY TORTUGA","priceAdd":20},{"name":"PAY ZARZAMORA","priceAdd":20},{"name":"PAY DE QUESO","priceAdd":20},{"name":"FERRERO ROCHER","priceAdd":50},{"name":"MAGNUM","priceAdd":30},{"name":"BOLA DE NIEVE","priceAdd":15}],"groups":[{"name":"Bases","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nutella"},{"name":"Chantilly"},{"name":"Plt chocolate"}]},{"name":"Topping","emoji":"🫙","min":0,"max":1,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]},{"name":"Mediano","emoji":"🍓","price":80,"variants":[{"name":"NORMALES","priceAdd":0},{"name":"PINGÜINO","priceAdd":10},{"name":"GANSITO","priceAdd":10},{"name":"CHOCORROL","priceAdd":10},{"name":"BUBULUBU","priceAdd":10},{"name":"KINDER BUENO","priceAdd":15},{"name":"PALETA PAYASO","priceAdd":15},{"name":"PAY TORTUGA","priceAdd":20},{"name":"PAY ZARZAMORA","priceAdd":20},{"name":"PAY DE QUESO","priceAdd":20},{"name":"FERRERO ROCHER","priceAdd":50},{"name":"MAGNUM","priceAdd":30},{"name":"BOLA DE NIEVE","priceAdd":15}],"groups":[{"name":"Bases","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nutella"},{"name":"Chantilly"},{"name":"Plt chocolate"}]},{"name":"Topping","emoji":"🫙","min":0,"max":2,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]},{"name":"Grande","emoji":"🍓","price":110,"variants":[{"name":"NORMALES","priceAdd":0},{"name":"PINGÜINO","priceAdd":10},{"name":"GANSITO","priceAdd":10},{"name":"CHOCORROL","priceAdd":10},{"name":"BUBULUBU","priceAdd":10},{"name":"KINDER BUENO","priceAdd":15},{"name":"PALETA PAYASO","priceAdd":15},{"name":"PAY TORTUGA","priceAdd":20},{"name":"PAY ZARZAMORA","priceAdd":20},{"name":"PAY DE QUESO","priceAdd":20},{"name":"FERRERO ROCHER","priceAdd":50},{"name":"MAGNUM","priceAdd":30},{"name":"BOLA DE NIEVE","priceAdd":15}],"groups":[{"name":"Bases","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nutella"},{"name":"Chantilly"},{"name":"Plt chocolate"}]},{"name":"Topping","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]}]},{"name":"Frappes","emoji":"🧊","subcategories":[{"name":"Frappe agua","emoji":"🥛","price":70,"variants":[{"name":"ICE CEREZA","priceAdd":0},{"name":"ICE MORA AZUL","priceAdd":0},{"name":"MANGO","priceAdd":0},{"name":"PEPINO","priceAdd":0},{"name":"CHAMOYADA DE PIÑA","priceAdd":0},{"name":"FRUTOS ROJOS","priceAdd":0}],"groups":[{"name":"vaso","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"}]}],"extras":[{"name":"vaso","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"}]}]},{"name":"Frappe de leche","emoji":"🧋","price":80,"variants":[{"name":"OREO","priceAdd":0},{"name":"GANSITO","priceAdd":0},{"name":"PINGÜINO","priceAdd":0},{"name":"CHOCORROL","priceAdd":0},{"name":"BUBULUBU","priceAdd":0},{"name":"KINDER DELIS","priceAdd":0},{"name":"FERRERO ROHER","priceAdd":0},{"name":"NUTELLA","priceAdd":0},{"name":"M&M's","priceAdd":0},{"name":"MAZAPAN","priceAdd":0},{"name":"PIÑA COLADA","priceAdd":0},{"name":"MOKA","priceAdd":0},{"name":"FRUTOS ROJOS","priceAdd":0}],"groups":[{"name":"Leche","emoji":"🫙","min":0,"max":1,"items":[{"name":"Entera"},{"name":"Deslactosada"}]}],"extras":[]}]},{"name":"Creppa","emoji":"🫓","subcategories":[{"name":"Dulce","emoji":"🫓","price":80,"variants":[{"name":"Nutella","priceAdd":0},{"name":"queso crema","priceAdd":0}],"groups":[{"name":"Fruta","emoji":"🫙","min":0,"max":2,"items":[{"name":"Fresa"},{"name":"Platano"}]},{"name":"Topping","emoji":"🫙","min":0,"max":1,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Fruta","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Fresa"},{"name":"Platano"}]},{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]},{"name":"Salada","emoji":"🫓","price":70,"variants":[{"name":"JAMON Y QUESO CREMA","priceAdd":0},{"name":"JAMON Y QUESO MOZARELLA","priceAdd":0}],"groups":[],"extras":[]}]},{"name":"Tostitos","emoji":"🥔","subcategories":[{"name":"Tostitos","emoji":"📏","price":80,"variants":[{"name":"Verdes","priceAdd":0},{"name":"Morados","priceAdd":0}],"groups":[{"name":"Preparación","emoji":"🫙","min":0,"max":5,"items":[{"name":"Elote"},{"name":"Queso amarillo"},{"name":"Crema"},{"name":"Queso rayallo"},{"name":"Salsa casera"}]}],"extras":[{"name":"Preparación","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Elote"},{"name":"Queso amarillo"},{"name":"Crema"},{"name":"Queso rayallo"},{"name":"Salsa casera"}]}]}]},{"name":"Bebidas","emoji":"🥤","subcategories":[{"name":"Bebida preparada","emoji":"🥤","price":80,"variants":[{"name":"RUSA","priceAdd":0},{"name":"TOPOCHICO","priceAdd":0},{"name":"SANGRIA","priceAdd":0},{"name":"PEÑAFIEL FRESA","priceAdd":0}],"groups":[{"name":"Fruta","emoji":"🫙","min":0,"max":1,"items":[{"name":"Piña"},{"name":"Fresa"}]},{"name":"Vaso","emoji":"🫙","min":0,"max":4,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"},{"name":"Gomitas"}]}],"extras":[{"name":"Vaso","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"},{"name":"Gomitas"}]}]}]},{"name":"Licuado","emoji":"🍧","subcategories":[{"name":"licuado","emoji":"📏","price":70,"variants":[{"name":"FRESA","priceAdd":0},{"name":"PLATANO","priceAdd":0},{"name":"CHOCOLATE","priceAdd":0}],"groups":[{"name":"Leche","emoji":"🫙","min":0,"max":1,"items":[{"name":"Entera"},{"name":"Deslactosada"}]}],"extras":[]}]},{"name":"Malteada","emoji":"🍨","subcategories":[{"name":"Malteada","emoji":"📏","price":80,"variants":[{"name":"FRESA","priceAdd":0},{"name":"CHOCOLATE","priceAdd":0}],"groups":[{"name":"Leche","emoji":"🫙","min":0,"max":1,"items":[{"name":"Entera"},{"name":"Deslactosada"}]}],"extras":[]}]},{"name":"Banderillas coreanas","emoji":"🍢","subcategories":[{"name":"CLASICA","emoji":"📏","price":65,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"RES","priceAdd":10},{"name":"RES Y QUESO","priceAdd":15},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]},{"name":"CHEETOS FLAMING HOT","emoji":"📏","price":80,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"RES","priceAdd":10},{"name":"RES Y QUESO","priceAdd":15},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]},{"name":"TAKIS FUEGO","emoji":"📏","price":80,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"RES","priceAdd":10},{"name":"RES Y QUESO","priceAdd":15},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]},{"name":"PAPA FRITA","emoji":"📏","price":85,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"RES","priceAdd":10},{"name":"RES Y QUESO","priceAdd":15},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]}]},{"name":"Rebanada","emoji":"🍰","subcategories":[{"name":"Pay de queso","emoji":"🍰","price":65,"variants":[{"name":"PAY TORTUGA","priceAdd":0}],"groups":[{"name":"TOPPING","emoji":"🫙","min":0,"max":1,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Oreo"},{"name":"Krankis"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"TOPPING","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Oreo"},{"name":"Krankis"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]}]},{"name":"Comida","emoji":"🍴","subcategories":[{"name":"Hamburguesa","emoji":"🍔","price":50,"variants":[{"name":"Normal","priceAdd":0},{"name":"Doble carne","priceAdd":60}],"groups":[{"name":"Ingredientes","emoji":"🥩","min":0,"max":3,"items":[{"name":"Carne"},{"name":"Jamón"},{"name":"Queso"}]},{"name":"Verduras","emoji":"🥬","min":0,"max":4,"items":[{"name":"Lechuga"},{"name":"Tomate"},{"name":"Cebolla"},{"name":"Aguacate"}]},{"name":"Aderezos","emoji":"🥫","min":0,"max":3,"items":[{"name":"Mayonesa"},{"name":"Catsup"},{"name":"Mostaza"}]}],"extras":[{"name":"Ingredientes","emoji":"🥩","pricePerUnit":15,"items":[{"name":"Carne"},{"name":"Jamón"},{"name":"Queso"}]},{"name":"Verduras","emoji":"🥬","pricePerUnit":8,"items":[{"name":"Lechuga"},{"name":"Tomate"},{"name":"Cebolla"},{"name":"Aguacate"}]},{"name":"Aderezos","emoji":"🥫","pricePerUnit":5,"items":[{"name":"Mayonesa"},{"name":"Catsup"},{"name":"Mostaza"}]}]}]},{"name":"Snacks","emoji":"🍬","subcategories":[{"name":"Chocobanana","emoji":"🍌","price":15,"variants":[{"name":"Clásica","priceAdd":0}],"groups":[{"name":"Topping","emoji":"🫙","min":0,"max":1,"items":[{"name":"Almendras"},{"name":"Nuez"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Oreo"},{"name":"Krankis"},{"name":"Chispas de chocolate"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Nutella"},{"name":"Lechera"},{"name":"Miel"},{"name":"Cajeta"}]}],"extras":[]},{"name":"Chocofresa","emoji":"🍓","price":20,"variants":[{"name":"Clásica","priceAdd":0}],"groups":[{"name":"Topping","emoji":"🫙","min":0,"max":1,"items":[{"name":"Almendras"},{"name":"Nuez"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Oreo"},{"name":"Krankis"},{"name":"Chispas de chocolate"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Nutella"},{"name":"Lechera"},{"name":"Miel"},{"name":"Cajeta"}]}],"extras":[]}]}]};
+const DATA = {"businessName":"SON D'ELICIAS","emoji":"🍓","accentColor":"#eab308","priceMode":"combined","waPhone":"528111200176","mapsUrl":"https://maps.app.goo.gl/kEzvK5F5jwHc5cRY9","socialUrls":[{"id":"tja0r0j7","icon":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/960px-Facebook_Logo_%282019%29.png","url":"https://www.facebook.com/son.delicias.fresas.snacks","label":"facebook"}],"schedulePhysical":{"0":{"closed":false,"open":"17:00","close":"21:30"},"1":{"open":"17:00","close":"21:30","closed":false},"2":{"open":"17:00","close":"22:30","closed":false},"3":{"open":"17:00","close":"21:30","closed":false},"4":{"open":"17:00","close":"21:30","closed":false},"5":{"open":"17:00","close":"22:30","closed":false},"6":{"open":"17:00","close":"21:00","closed":true}},"scheduleOnline":{"0":{"closed":true},"1":{"open":"17:00","close":"22:00","closed":false},"2":{"open":"17:00","close":"22:00","closed":false},"3":{"open":"17:00","close":"22:00","closed":false},"4":{"open":"17:00","close":"22:00","closed":false},"5":{"open":"17:00","close":"22:00","closed":false},"6":{"open":"17:00","close":"22:00","closed":false}},"categories":[{"name":"Fresas con crema","emoji":"🍓","subcategories":[{"name":"Chico","emoji":"🍓","price":60,"variants":[{"name":"NORMALES","priceAdd":0},{"name":"PINGÜINO","priceAdd":10},{"name":"GANSITO","priceAdd":10},{"name":"CHOCORROL","priceAdd":10},{"name":"BUBULUBU","priceAdd":10},{"name":"KINDER BUENO","priceAdd":15},{"name":"PALETA PAYASO","priceAdd":15},{"name":"PAY TORTUGA","priceAdd":20},{"name":"PAY ZARZAMORA","priceAdd":20},{"name":"PAY DE QUESO","priceAdd":20},{"name":"FERRERO ROCHER","priceAdd":50}],"groups":[{"name":"Bases","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nutella"},{"name":"Chantilly"},{"name":"Plt chocolate"}]},{"name":"Topping","emoji":"🫙","min":0,"max":1,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]},{"name":"Mediano","emoji":"🍓","price":80,"variants":[{"name":"NORMALES","priceAdd":0},{"name":"PINGÜINO","priceAdd":10},{"name":"GANSITO","priceAdd":10},{"name":"CHOCORROL","priceAdd":10},{"name":"BUBULUBU","priceAdd":10},{"name":"KINDER BUENO","priceAdd":15},{"name":"PALETA PAYASO","priceAdd":15},{"name":"PAY TORTUGA","priceAdd":20},{"name":"PAY ZARZAMORA","priceAdd":20},{"name":"PAY DE QUESO","priceAdd":20},{"name":"FERRERO ROCHER","priceAdd":50}],"groups":[{"name":"Bases","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nutella"},{"name":"Chantilly"},{"name":"Plt chocolate"}]},{"name":"Topping","emoji":"🫙","min":0,"max":2,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]},{"name":"Grande","emoji":"🍓","price":110,"variants":[{"name":"NORMALES","priceAdd":0},{"name":"PINGÜINO","priceAdd":10},{"name":"GANSITO","priceAdd":10},{"name":"CHOCORROL","priceAdd":10},{"name":"BUBULUBU","priceAdd":10},{"name":"KINDER BUENO","priceAdd":15},{"name":"PALETA PAYASO","priceAdd":15},{"name":"PAY TORTUGA","priceAdd":20},{"name":"PAY ZARZAMORA","priceAdd":20},{"name":"PAY DE QUESO","priceAdd":20},{"name":"FERRERO ROCHER","priceAdd":50}],"groups":[{"name":"Bases","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nutella"},{"name":"Chantilly"},{"name":"Plt chocolate"}]},{"name":"Topping","emoji":"🫙","min":0,"max":3,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]}]},{"name":"Frappes","emoji":"🧊","subcategories":[{"name":"Frappe agua","emoji":"🥛","price":70,"variants":[{"name":"ICE CEREZA","priceAdd":0},{"name":"ICE MORA AZUL","priceAdd":0},{"name":"MANGO","priceAdd":0},{"name":"PEPINO","priceAdd":0},{"name":"CHAMOYADA DE PIÑA","priceAdd":0},{"name":"FRUTOS ROJOS","priceAdd":0}],"groups":[{"name":"vaso","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"}]}],"extras":[{"name":"vaso","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"}]}]},{"name":"Frappe de leche","emoji":"🧋","price":80,"variants":[{"name":"OREO","priceAdd":0},{"name":"GANSITO","priceAdd":0},{"name":"PINGÜINO","priceAdd":0},{"name":"CHOCORROL","priceAdd":0},{"name":"BUBULUBU","priceAdd":0},{"name":"KINDER DELIS","priceAdd":0},{"name":"FERRERO ROHER","priceAdd":0},{"name":"NUTELLA","priceAdd":0},{"name":"M&M's","priceAdd":0},{"name":"MAZAPAN","priceAdd":0},{"name":"PIÑA COLADA","priceAdd":0},{"name":"MOKA","priceAdd":0},{"name":"FRUTOS ROJOS","priceAdd":0}],"groups":[{"name":"Leche","emoji":"🫙","min":0,"max":1,"items":[{"name":"Entera"},{"name":"Deslactosada"}]}],"extras":[]}]},{"name":"Creppa","emoji":"🫓","subcategories":[{"name":"Dulce","emoji":"🫓","price":80,"variants":[{"name":"Nutella","priceAdd":0},{"name":"queso crema","priceAdd":0}],"groups":[{"name":"Fruta","emoji":"🫙","min":0,"max":2,"items":[{"name":"Fresa"},{"name":"Platano"}]},{"name":"Topping","emoji":"🫙","min":0,"max":1,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"Fruta","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Fresa"},{"name":"Platano"}]},{"name":"Topping","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Krankis"},{"name":"Oreo"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]},{"name":"Salada","emoji":"🫓","price":80,"variants":[{"name":"jamon y queso crema","priceAdd":0},{"name":"jamon y queso mozarella","priceAdd":0}],"groups":[],"extras":[]}]},{"name":"Papitas","emoji":"🥔","subcategories":[{"name":"Tostitos","emoji":"📏","price":80,"variants":[{"name":"Verdes","priceAdd":0},{"name":"Morados","priceAdd":0}],"groups":[{"name":"Preparación","emoji":"🫙","min":0,"max":5,"items":[{"name":"Elote"},{"name":"Queso amarillo"},{"name":"Crema"},{"name":"Queso rayallo"},{"name":"Salsa casera"}]}],"extras":[{"name":"Preparación","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Elote"},{"name":"Queso amarillo"},{"name":"Crema"},{"name":"Queso rayallo"},{"name":"Salsa casera"}]}]}]},{"name":"Bebidas","emoji":"🥤","subcategories":[{"name":"Bebida preparada","emoji":"🥤","price":80,"variants":[{"name":"RUSA","priceAdd":0},{"name":"TOPOCHICO","priceAdd":0},{"name":"SANGRIA","priceAdd":0},{"name":"PEÑAFIEL FRESA","priceAdd":0}],"groups":[{"name":"Fruta","emoji":"🫙","min":0,"max":1,"items":[{"name":"Piña"},{"name":"Fresa"}]},{"name":"Vaso","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"},{"name":"Gomitas"}]}],"extras":[{"name":"Vaso","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chamoy"},{"name":"Chile en polvo"},{"name":"Tarugo"},{"name":"Gomitas"}]}]}]},{"name":"Licuado","emoji":"🍧","subcategories":[{"name":"licuado","emoji":"📏","price":70,"variants":[{"name":"FRESA","priceAdd":0},{"name":"PLATANO","priceAdd":0},{"name":"CHOCOLATE","priceAdd":0}],"groups":[{"name":"Leche","emoji":"🫙","min":0,"max":1,"items":[{"name":"Entera"},{"name":"Deslactosada"}]}],"extras":[]}]},{"name":"Malteada","emoji":"🍨","subcategories":[{"name":"Malteada","emoji":"📏","price":80,"variants":[{"name":"FRESA","priceAdd":0},{"name":"CHOCOLATE","priceAdd":0}],"groups":[{"name":"Leche","emoji":"🫙","min":0,"max":1,"items":[{"name":"Entera"},{"name":"Deslactosada"}]}],"extras":[]}]},{"name":"Banderillas coreanas","emoji":"🍢","subcategories":[{"name":"CLASICA","emoji":"📏","price":65,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]},{"name":"CHEETOS FLAMING HOT","emoji":"📏","price":80,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]},{"name":"TAKIS FUEGO","emoji":"📏","price":80,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]},{"name":"PAPA FRITA","emoji":"📏","price":85,"variants":[{"name":"PAVO","priceAdd":0},{"name":"PAVO Y QUESO","priceAdd":10},{"name":"QUESO","priceAdd":30}],"groups":[{"name":"Queso amarillo","emoji":"🫙","min":0,"max":1,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}],"extras":[{"name":"Queso amarillo","emoji":"🫙","pricePerUnit":15,"items":[{"name":"No"},{"name":"Bañada"},{"name":"A parte"}]}]}]},{"name":"Rebanada","emoji":"🍰","subcategories":[{"name":"Pay de queso","emoji":"🍰","price":65,"variants":[{"name":"PAY TORTUGA","priceAdd":0},{"name":"PAY ZARZAMORA","priceAdd":0},{"name":"PAY DE QUESO","priceAdd":0}],"groups":[{"name":"TOPPING","emoji":"🫙","min":0,"max":1,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Oreo"},{"name":"Krankis"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","min":0,"max":1,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}],"extras":[{"name":"TOPPING","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Nuez"},{"name":"Almendras"},{"name":"Granola"},{"name":"Lunetas"},{"name":"Bombones"},{"name":"Oreo"},{"name":"Krankis"},{"name":"Chispas"}]},{"name":"Jarabe","emoji":"🫙","pricePerUnit":5,"items":[{"name":"Chocolate"},{"name":"Fresa"},{"name":"Cajeta"},{"name":"Lechera"},{"name":"Miel"},{"name":"Nutella"}]}]}]},{"name":"Comida","emoji":"🍴","subcategories":[{"name":"Hamburguesa","emoji":"🍔","price":50,"variants":[{"name":"Normal","priceAdd":0},{"name":"Doble carne","priceAdd":60}],"groups":[{"name":"Ingredientes","emoji":"🥩","min":0,"max":3,"items":[{"name":"Carne"},{"name":"Jamón"},{"name":"Queso"}]},{"name":"Verduras","emoji":"🥬","min":0,"max":4,"items":[{"name":"Lechuga"},{"name":"Tomate"},{"name":"Cebolla"},{"name":"Aguacate"}]},{"name":"Aderezos","emoji":"🥫","min":0,"max":3,"items":[{"name":"Mayonesa"},{"name":"Catsup"},{"name":"Mostaza"}]}],"extras":[{"name":"Ingredientes","emoji":"🥩","pricePerUnit":15,"items":[{"name":"Carne"},{"name":"Jamón"},{"name":"Queso"}]},{"name":"Verduras","emoji":"🥬","pricePerUnit":8,"items":[{"name":"Lechuga"},{"name":"Tomate"},{"name":"Cebolla"},{"name":"Aguacate"}]},{"name":"Aderezos","emoji":"🥫","pricePerUnit":5,"items":[{"name":"Mayonesa"},{"name":"Catsup"},{"name":"Mostaza"}]}]}]}]};
 const cart = [];
 let currentCatIdx = -1;
 let currentSc = null; /* { catIdx, scIdx, variantIdx, groups:{}, extras:{}, qty } */
@@ -461,8 +473,9 @@ function renderProductBody(){
 
   /* Grupos */
   sc.groups.forEach((g, gi) => {
+    const p = groupProgress(gi, g);
     html += '<div class="sect"><div class="sect-ttl">'+(g.emoji?esc(g.emoji)+' ':'')+esc(g.name)+
-      '<span class="progress" id="prog-g'+gi+'">0/'+g.max+(g.min>0?' · mín '+g.min:'')+'</span></div>';
+      '<span class="'+p.cls+'" id="prog-g'+gi+'">'+p.txt+'</span></div>';
     g.items.forEach((it, ii) => {
       const q = (currentSc.groups[gi]||{})[ii] || 0;
       html += '<div class="opt qty-row">'+
@@ -507,6 +520,17 @@ function selectVariant(vi){
   updateProductTotal();
 }
 
+/* Estado del contador de un grupo: 0/3 · mín 2 → 2/3 ✓ → 1/3 · mín 2 (naranja).
+   Se calcula desde currentSc para que al re-dibujar (p.ej. al cambiar de
+   variante) el contador no se quede en 0 con elementos ya seleccionados. */
+function groupProgress(gi, g){
+  let total = 0;
+  Object.values(currentSc.groups[gi]||{}).forEach(q => total += q);
+  if (total === 0)     return { cls:'progress',      txt:'0/'+g.max+(g.min>0?' · mín '+g.min:'') };
+  if (total >= g.min)  return { cls:'progress ok',   txt: total+'/'+g.max+' ✓' };
+  return                      { cls:'progress warn', txt: total+'/'+g.max+' · mín '+g.min };
+}
+
 function changeGroupQty(gi, ii, delta){
   const sc = DATA.categories[currentSc.catIdx].subcategories[currentSc.scIdx];
   const g = sc.groups[gi];
@@ -519,12 +543,11 @@ function changeGroupQty(gi, ii, delta){
   else currentSc.groups[gi][ii] = next;
   document.getElementById('gq-'+gi+'-'+ii).textContent = next;
   /* Actualizar progress */
-  total = 0; Object.values(currentSc.groups[gi]||{}).forEach(q => total += q);
   const prog = document.getElementById('prog-g'+gi);
   if (prog){
-    if (total === 0) prog.className = 'progress', prog.textContent = '0/'+g.max+(g.min>0?' · mín '+g.min:'');
-    else if (total >= g.min) prog.className = 'progress ok', prog.textContent = total+'/'+g.max+' ✓';
-    else prog.className = 'progress warn', prog.textContent = total+'/'+g.max+' · mín '+g.min;
+    const p = groupProgress(gi, g);
+    prog.className = p.cls;
+    prog.textContent = p.txt;
   }
   updateProductTotal();
 }
@@ -631,7 +654,13 @@ function openCart(){
 function renderCart(){
   const body = document.getElementById('modal-cart-body');
   let total = 0;
-  let html = cart.map((c,i) => {
+  /* Aviso de horario: informa, NO bloquea. El pedido se puede armar y enviar
+     siempre; el horario sólo avisa cuándo lo van a atender. */
+  let html = isOnlineOpen() ? '' :
+    '<div class="cart-note"><b>🕐 Ahora estamos cerrados en línea.</b> Puedes armar tu pedido '+
+    'y enviarlo de todos modos; te responderemos en cuanto abramos. '+
+    '<button onclick="openSchedule()">Ver horarios</button></div>';
+  html += cart.map((c,i) => {
     const sub = c.unitPrice * c.qty;
     total += sub;
     let det = '';
@@ -657,23 +686,75 @@ function removeCartItem(i){
   if (!cart.length) closeModal('modal-cart');
 }
 
+/* ─── Código compacto de pedido (MN2) ──────────────────────────
+   Mucho más corto que el JSON+base64 anterior (MN1), así el QR sale
+   con menos módulos y se escanea sin problemas desde una pantalla.
+
+   Formato:  MN2|item~item~...
+   item   =  categoría|subcategoría|variante|cantidad|grupos|extras
+   grupos =  Grupo>elemento*qty,elemento;Grupo2>elemento
+   El "*qty" se omite cuando la cantidad es 1.
+   Escapes (para nombres que contengan un separador):
+     \\ = \    \t = ~    \p = |    \s = ;    \g = >    \c = ,    \x = *   */
+const MN_ESC = { '\\':'\\\\', '~':'\\t', '|':'\\p', ';':'\\s', '>':'\\g', ',':'\\c', '*':'\\x' };
+function mnEnc(s){
+  return String(s == null ? '' : s).replace(/[\\~|;>,*]/g, ch => MN_ESC[ch]);
+}
+function mnEncGroups(arr){
+  return (arr||[]).map(g =>
+    mnEnc(g.groupName) + '>' + (g.items||[]).map(it =>
+      mnEnc(it.name) + ((it.qty||1) > 1 ? '*' + it.qty : '')
+    ).join(',')
+  ).join(';');
+}
+function buildOrderCode(){
+  return 'MN2|' + cart.map(c => [
+    mnEnc(c.catName),
+    mnEnc(c.scName),
+    mnEnc(c.varName || ''),
+    String(c.qty || 1),
+    mnEncGroups(c.groups),
+    mnEncGroups(c.extras)
+  ].join('|')).join('~');
+}
+
 function generateQR(){
   if (!cart.length) return;
-  const payload = { items: cart.map(c => ({
-    catName: c.catName, scName: c.scName, varName: c.varName,
-    groups: c.groups, extras: c.extras, qty: c.qty
-  })) };
-  const json = JSON.stringify(payload);
-  const b64 = btoa(unescape(encodeURIComponent(json)));
-  const text = 'MN1|' + b64;
-  const qr = qrcode(0, 'L');
-  qr.addData(text);
-  qr.make();
-  const img = qr.createImgTag(5, 8);
+  if (typeof qrcode === 'undefined'){
+    alert('No se pudo cargar el generador de QR (¿sin internet?). Usa "Enviar por WhatsApp".');
+    return;
+  }
+  const text = buildOrderCode();
+  let img;
+  try {
+    const qr = qrcode(0, 'L');
+    qr.addData(text);
+    qr.make();
+    img = qr.createImgTag(8, 16);
+  } catch (e) {
+    alert('El pedido es demasiado grande para un solo QR.\nHaz dos pedidos por separado o usa "Enviar por WhatsApp".');
+    return;
+  }
   document.getElementById('modal-qr-body').innerHTML = img +
-    '<div style="font-size:13px;color:var(--t3);margin-top:6px">Muestra este código al personal para registrar tu pedido</div>';
+    '<div style="font-size:13px;color:var(--t3);margin-top:6px">Muestra este código al personal para registrar tu pedido</div>' +
+    '<div style="margin-top:12px;font-size:11px;color:var(--t3);text-align:left">¿No se puede escanear? Copia este código y mándaselo al personal (lo pegan en su app con «Escribir manual»):</div>' +
+    '<textarea id="mw-code" readonly onclick="this.select()" style="width:100%;height:70px;margin-top:6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--bg);color:var(--t1);resize:none">'+esc(text)+'</textarea>' +
+    '<button class="btn btn-block" style="margin-top:6px" onclick="copyOrderCode()">📋 Copiar código</button>';
   closeModal('modal-cart');
   document.getElementById('modal-qr').classList.add('open');
+}
+
+function copyOrderCode(){
+  const ta = document.getElementById('mw-code');
+  if (!ta) return;
+  ta.select(); ta.setSelectionRange(0, 999999);
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch(e){}
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).catch(()=>{});
+    ok = true;
+  }
+  alert(ok ? 'Código copiado ✓ Pégalo en un mensaje al personal' : 'Mantén presionado el texto para copiarlo manualmente');
 }
 
 function buildWhatsappText(){
@@ -704,12 +785,24 @@ function buildWhatsappText(){
 }
 
 function shareWhatsapp(){
+  const phone = String(DATA.waPhone || '').replace(/\D/g, '');
+  if (!phone){
+    alert('Este menú no tiene WhatsApp configurado. Muestra el QR al personal.');
+    return;
+  }
   const text = buildWhatsappText();
-  const phone = '5218111200176';
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).catch(function(){});
   }
   window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank');
+}
+
+/* Sin número configurado no tiene sentido mostrar el botón: el QR basta. */
+function applyWhatsappAvailability(){
+  const btn = document.getElementById('btn-wa');
+  if (!btn) return;
+  const phone = String(DATA.waPhone || '').replace(/\D/g, '');
+  btn.style.display = phone ? '' : 'none';
 }
 
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
@@ -724,6 +817,7 @@ document.querySelectorAll('.modal').forEach(m => {
 /* Init */
 renderGrid();
 renderActionRow();
+applyWhatsappAvailability();
 applyScheduleStatus();
 setInterval(applyScheduleStatus, 60000);
 </script>
